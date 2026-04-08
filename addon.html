@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/image/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <title>Project | HousingBase</title>
+  <style>
+    body { overflow-x: hidden; }
+    @font-face { font-family: "Minecraftia"; src: url("/Minecraftia-Regular.ttf") format("truetype"); }
+    .addon-page { max-width: 900px; margin: 0 auto; padding: 5.5rem 1.5rem 3rem; position: relative; z-index: 2; }
+
+    .ap-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #444; margin-bottom: 1.6rem; }
+    .ap-breadcrumb a { color: #444; text-decoration: none; transition: color 0.15s; }
+    .ap-breadcrumb a:hover { color: var(--text); }
+    .ap-breadcrumb .sep { color: #2a2a2a; }
+
+    .ap-layout { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+
+    .ap-main {}
+
+    .ap-header { margin-bottom: 1.4rem; }
+    .ap-title { font-size: 1.7rem; font-weight: 700; margin: 0 0 0.5rem; line-height: 1.2; }
+    .ap-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem; }
+    .ap-meta { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; color: #555; }
+    .ap-meta img { border-radius: 5px; }
+    .ap-meta a { color: #2564eb; text-decoration: none; }
+    .ap-meta a:hover { color: #90b8ff; }
+    .ap-meta .sep { color: #2a2a2a; }
+
+    .ap-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.4rem; }
+    .ap-tab { padding: 0.55rem 1rem; font-size: 0.86rem; font-weight: 500; color: #555; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+    .ap-tab:hover { color: var(--text); }
+    .ap-tab.active { color: var(--text); border-bottom-color: var(--blue); }
+
+    .ap-panel { display: none; }
+    .ap-panel.active { display: block; }
+
+    .ap-description {
+      color: #ccc; font-size: 0.9rem; line-height: 1.8;
+      min-height: 80px;
+    }
+    .ap-description h1, .ap-description h2, .ap-description h3 { color: var(--text); margin: 1.2rem 0 0.5rem; font-weight: 600; }
+    .ap-description h1 { font-size: 1.3rem; }
+    .ap-description h2 { font-size: 1.1rem; }
+    .ap-description h3 { font-size: 0.95rem; }
+    .ap-description p { margin: 0.5rem 0; }
+    .ap-description ul, .ap-description ol { padding-left: 1.4rem; margin: 0.5rem 0; }
+    .ap-description li { margin: 0.2rem 0; }
+    .ap-description code { background: rgba(255,255,255,0.07); border-radius: 4px; padding: 1px 5px; font-family: monospace; font-size: 0.88em; color: #90b8ff; }
+    .ap-description pre { background: #060606; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px; overflow-x: auto; margin: 0.8rem 0; }
+    .ap-description pre code { background: none; padding: 0; color: #6b8dc4; }
+    .ap-description strong { color: var(--text); font-weight: 600; }
+    .ap-description em { color: #aaa; }
+    .ap-description a { color: var(--blue); }
+    .ap-description blockquote { border-left: 3px solid var(--blue); margin: 0.8rem 0; padding: 0.4rem 1rem; color: #777; font-style: italic; }
+    .ap-description hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+    .ap-file-preview {
+      background: #060606;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .ap-file-header { background: #0d0d0d; padding: 10px 14px; font-size: 0.78rem; color: #444; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; }
+    .ap-file-header span { display: flex; align-items: center; gap: 6px; }
+    .ap-file-code { padding: 14px; font-family: 'Consolas','Fira Code',monospace; font-size: 0.82rem; color: #6b8dc4; line-height: 1.6; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+
+    .ap-sidebar {}
+
+    .ap-card { background: rgba(10,10,10,0.8); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.2rem; margin-bottom: 12px; }
+    .ap-card h3 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #333; margin: 0 0 0.9rem; }
+
+    .ap-dl-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 0.75rem; background: var(--blue); color: #fff; border: none; border-radius: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.18s; }
+    .ap-dl-btn:hover { background: var(--blue-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(37,100,235,0.3); }
+
+    .ap-like-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 0.65rem; background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid var(--border); border-radius: 9px; font-size: 0.86rem; font-weight: 500; cursor: pointer; transition: all 0.18s; margin-top: 8px; }
+    .ap-like-btn:hover { border-color: rgba(236,72,153,0.4); background: rgba(236,72,153,0.08); color: #f472b6; }
+    .ap-like-btn.liked { border-color: rgba(236,72,153,0.4); background: rgba(236,72,153,0.1); color: #f472b6; }
+
+    .ap-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.84rem; }
+    .ap-stat-row:last-child { border-bottom: none; }
+    .ap-stat-lbl { color: #555; }
+    .ap-stat-val { color: var(--text); font-weight: 500; }
+
+    .ap-author { display: flex; align-items: center; gap: 10px; }
+    .ap-author img { width: 40px; height: 40px; border-radius: 8px; }
+    .ap-author-info { min-width: 0; }
+    .ap-author-name { font-size: 0.9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ap-author-link { font-size: 0.78rem; color: var(--blue); text-decoration: none; display: block; margin-top: 1px; }
+    .ap-author-link:hover { color: #90b8ff; }
+
+    .ap-loading { text-align: center; padding: 4rem; color: #333; }
+    .ap-error { text-align: center; padding: 4rem; color: #555; }
+
+    @media (max-width: 720px) {
+      .ap-layout { grid-template-columns: 1fr; }
+      .ap-sidebar { order: -1; }
+    }
+    .ap-file-code,
+    .ap-file-code * {
+      font-family: "Minecraftia", monospace !important;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="/index.html"><img src="image/blueblue.png" alt="HousingBase" /></a></div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+    <nav class="nav-links">
+      <a href="/housing.html">Housing Browser</a>
+      <a href="/fcm.html">FCM</a>
+      <a href="/news.html">News</a>
+      <a href="/browser.html">HTSL Library</a>
+      <a href="/dashboard.html">Dashboard</a>
+      <div id="logged-out" style="display:flex;align-items:center;">
+        <a href="/login.html"><button class="primary-btn">Sign In</button></a>
+      </div>
+      <div id="logged-in" style="display:none;align-items:center;">
+        <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px;cursor:pointer;margin-left:8px;" />
+        <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
+      </div>
+    </nav>
+  </header>
+
+  <div id="announcement"></div>
+
+  <div class="addon-page" id="addonPage">
+    <div class="ap-loading" id="ap-loading">Loading…</div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <img src="/image/fullwhite.png" alt="HousingBase" class="footer-logo" />
+        <div class="social-icons">
+          <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/><path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/></svg></a>
+          <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-links"><a href="/index.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms</a></div>
+      <p class="footer-credit">&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <div id="del-confirm-overlay">
+    <div id="del-confirm-box">
+      <div class="del-modal-header">
+        <h3>Delete Project?</h3>
+        <span class="del-modal-close" id="del-confirm-close">&times;</span>
+      </div>
+      <div class="del-modal-body">
+        <p id="del-confirm-desc"></p>
+        <div class="del-actions" style="margin-top:1rem;">
+          <button class="danger-btn" id="del-confirm-yes">Delete</button>
+          <button class="secondary-btn" id="del-confirm-no">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const API_BASE_A = "https://housingbase-71z.onrender.com";
+
+    function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function fmtDate(ts) { if(!ts) return "—"; return new Date(ts).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); }
+    function avURL(p) { if(!p) return `${API_BASE_A}/uploads/avatars/default.png`; if(p.startsWith("http")) return p; return `${API_BASE_A}/${p.replace(/^\/?/,"")}`; }
+
+    function parseMarkdown(text) {
+      if (!text) return "";
+      let html = esc(text);
+      html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+      html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+      html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+      html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+      html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+      html = html.replace(/^---$/gm, "<hr>");
+      html = html.replace(/^\> (.+)$/gm, "<blockquote>$1</blockquote>");
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      html = html.replace(/^[-*] (.+)$/gm, "<li>$1</li>");
+      html = html.replace(/(<li>.*<\/li>)/gs, m => "<ul>" + m + "</ul>");
+      html = html.replace(/^(\d+)\. (.+)$/gm, "<li>$2</li>");
+      html = html.replace(/\n\n/g, "</p><p>");
+      html = html.replace(/\n/g, "<br>");
+      if (!html.startsWith("<h") && !html.startsWith("<ul") && !html.startsWith("<ol") && !html.startsWith("<blockquote") && !html.startsWith("<hr")) {
+        html = "<p>" + html + "</p>";
+      }
+      return html;
+    }
+
+    async function loadAddon() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      const page = document.getElementById("addonPage");
+
+      if (!id) { page.innerHTML = `<div class="ap-error"><p>No project ID specified.</p></div>`; return; }
+
+      const token = localStorage.getItem("authToken");
+      const me = await getMe();
+      renderAuth(me);
+
+      let addon, fileContent;
+      try {
+        const [ar, cr] = await Promise.all([
+          fetch(`${API_BASE_A}/api/addons/${id}`, { headers:{ Authorization:`Bearer ${token||""}` } }),
+          fetch(`${API_BASE_A}/api/addons/${id}/contents`, { headers:{ Authorization:`Bearer ${token||""}` } })
+        ]);
+        if (!ar.ok) throw new Error(ar.status === 403 ? "private" : "notfound");
+        addon = await ar.json();
+        fileContent = cr.ok ? (await cr.json()).content : "(failed to load)";
+      } catch (err) {
+        const msg = err.message === "private" ? "This project is private." : "Project not found.";
+        page.innerHTML = `<div class="ap-error"><p>${msg}</p><a href="/browser.html" class="primary-btn" style="display:inline-block;margin-top:1rem;">Back to Library</a></div>`;
+        return;
+      }
+
+      document.title = `${addon.name} | HousingBase`;
+
+      const isOwner = me && (me.username === addon.username || me.is_admin);
+      const likedByArr = Array.isArray(addon.liked_by) ? addon.liked_by : [];
+let liked = false;
+if (me && likedByArr.length) {
+  // liked_by stores user _id strings; fetch from token to get real id
+  try {
+    const meRes = await fetch(`${API_BASE_A}/api/me`, { headers: { Authorization: `Bearer ${token}` } });
+    const meData = await meRes.json();
+    const meId = meData._id || meData.id;
+    if (meId) liked = likedByArr.map(String).includes(String(meId));
+  } catch {}
+}
+
+      page.innerHTML = `
+        <div class="ap-breadcrumb">
+          <a href="/browser.html">HTSL Library</a>
+          <span class="sep">/</span>
+          <a href="/profile.html?user=${esc(addon.username)}">@${esc(addon.displayName||addon.username)}</a>
+          <span class="sep">/</span>
+          <span style="color:var(--text)">${esc(addon.name)}</span>
+        </div>
+
+        <div class="ap-layout">
+          <div class="ap-main">
+            <div class="ap-header">
+              <h1 class="ap-title">${esc(addon.name)}</h1>
+              <div class="ap-badges" id="ap-badges"></div>
+              <div class="ap-meta">
+                <img src="${avURL(addon.avatar)}" width="20" height="20" alt="" />
+                <a href="/profile.html?user=${esc(addon.username)}">@${esc(addon.displayName||addon.username)}</a>
+                <span class="sep">·</span>
+                <span>${fmtDate(addon.created_at)}</span>
+              </div>
+            </div>
+
+            <div class="ap-tabs" id="ap-tabs">
+              <div class="ap-tab active" data-panel="description">Description</div>
+              <div class="ap-tab" data-panel="code">HTSL Code</div>
+            </div>
+
+            <div class="ap-panel active" id="panel-description">
+              <div class="ap-description" id="ap-description-content"></div>
+            </div>
+
+            <div class="ap-panel" id="panel-code">
+              <div class="ap-file-preview">
+                <div class="ap-file-header">
+                  <span>${iconHTML("file-code",13)} ${esc(addon.file_name||addon.name+".htsl")}</span>
+                  <a href="${API_BASE_A}/api/addons/${id}/download" style="color:var(--blue);font-size:0.78rem;text-decoration:none;">Download</a>
+                </div>
+               <pre class="ap-file-code"><code id="ap-file-code"></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <aside class="ap-sidebar">
+            <div class="ap-card">
+              <a href="${API_BASE_A}/api/addons/${id}/download" class="ap-dl-btn" id="ap-dl-btn">
+                ${iconHTML("download",15)} Download File
+              </a>
+              <button style="margin-top: 15px;" class="ap-like-btn ${liked ? 'liked' : ''}" id="ap-like-btn">
+                ${liked ? iconHTML("heart-filled",14) : iconHTML("heart",14)} <span id="ap-like-count">${addon.likes||0}</span> likes
+              </button>
+            </div>
+
+            <div class="ap-card">
+              <h3>Details</h3>
+              <div class="ap-stat-row"><span class="ap-stat-lbl">Downloads</span><span class="ap-stat-val">${addon.downloads||0}</span></div>
+              <div class="ap-stat-row"><span class="ap-stat-lbl">Uploaded</span><span class="ap-stat-val">${fmtDate(addon.created_at)}</span></div>
+              ${addon.game_version ? `<div class="ap-stat-row"><span class="ap-stat-lbl">Game Version</span><span class="ap-stat-val">${addon.game_version === "reborn" ? "HTSL Reborn" : "1.8.9 (Legacy)"}</span></div>` : ""}
+              ${addon.category ? `<div class="ap-stat-row"><span class="ap-stat-lbl">Category</span><span class="ap-stat-val" style="text-transform:capitalize;">${esc(addon.category)}</span></div>` : ""}
+              ${addon.visibility && addon.visibility !== "public" ? `<div class="ap-stat-row"><span class="ap-stat-lbl">Visibility</span><span class="ap-stat-val" style="text-transform:capitalize;">${esc(addon.visibility)}</span></div>` : ""}
+            </div>
+
+            <div class="ap-card">
+              <h3>Author</h3>
+              <div class="ap-author">
+                <img src="${avURL(addon.avatar)}" alt="Avatar" />
+                <div class="ap-author-info">
+                  <div class="ap-author-name">${esc(addon.displayName||addon.username)}</div>
+                  <a href="/profile.html?user=${esc(addon.username)}" class="ap-author-link">@${esc(addon.username)}</a>
+                </div>
+              </div>
+            </div>
+
+            ${isOwner ? `
+            <div class="ap-card">
+              <h3>Manage</h3>
+              <a href="/update.html?id=${id}" class="ap-dl-btn" style="background:var(--blue);text-decoration:none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit Project
+              </a>
+            </div>` : ""}
+          </aside>
+        </div>
+      `;
+
+      const badgesEl = document.getElementById("ap-badges");
+      if (addon.category) {
+        const cb = document.createElement("span");
+        cb.className = "category-badge";
+        cb.appendChild(icon(CATEGORY_ICONS[addon.category]||"box", 11));
+        cb.appendChild(document.createTextNode(" " + addon.category));
+        badgesEl.appendChild(cb);
+      }
+      if (addon.visibility === "unlisted") {
+        const vb = document.createElement("span");
+        vb.className = "category-badge vis-badge-unlisted";
+        vb.appendChild(icon("link", 11));
+        vb.appendChild(document.createTextNode(" Unlisted"));
+        badgesEl.appendChild(vb);
+      }
+      if (addon.visibility === "private") {
+        const vb = document.createElement("span");
+        vb.className = "category-badge vis-badge-private";
+        vb.appendChild(icon("lock", 11));
+        vb.appendChild(document.createTextNode(" Private"));
+        badgesEl.appendChild(vb);
+      }
+      if (addon.game_version) {
+        const gb = document.createElement("span");
+        gb.className = "category-badge gv-badge";
+        gb.textContent = addon.game_version === "reborn" ? "HTSL Reborn" : "1.8.9 Legacy";
+        badgesEl.appendChild(gb);
+      }
+
+      const descEl = document.getElementById("ap-description-content");
+      if (addon.description) {
+        descEl.innerHTML = parseMarkdown(addon.description);
+      } else {
+        descEl.innerHTML = `<p style="color:#333;font-style:italic;">No description provided.</p>`;
+      }
+
+        const codeEl = document.getElementById("ap-file-code");
+        codeEl.innerHTML = highlightHTSL(fileContent || "(empty)");
+         document.querySelectorAll(".ap-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".ap-tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".ap-panel").forEach(p => p.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById("panel-" + tab.dataset.panel).classList.add("active");
+        });
+      });
+
+      const likeBtn = document.getElementById("ap-like-btn");
+      const likeCount = document.getElementById("ap-like-count");
+      likeBtn.addEventListener("click", async () => {
+        if (!me) { showToast("Sign in to like projects","info"); return; }
+        const endpoint = liked ? "unlike" : "like";
+        try {
+          const r = await fetch(`${API_BASE_A}/api/addons/${id}/${endpoint}`, { method:"POST", headers:{ Authorization:`Bearer ${token}` } });
+          const d = await r.json();
+          if (r.ok) {
+            liked = !liked;
+            likeCount.textContent = d.likes;
+            likeBtn.classList.toggle("liked", liked);
+            likeBtn.innerHTML = `${iconHTML(liked?"heart-filled":"heart",14)} <span id="ap-like-count">${d.likes}</span> likes`;
+          } else showToast(d.error||"Failed","error");
+        } catch { showToast("Network error","error"); }
+      });
+    }
+
+function highlightHTSL(code) {
+  const protect = [];
+  let i = 0;
+
+  const store = html => {
+    const key = `__HTSL_PROTECT_${i++}__`;
+    protect.push({ key, html });
+    return key;
+  };
+
+  const restore = text => {
+    for (const { key, html } of protect) {
+      text = text.replace(key, html);
+    }
+    return text;
+  };
+
+  // 1. COMMENTS FIRST
+  code = code.replace(/\/\*[\s\S]*?\*\//g, m =>
+    store(`<span class="tok-comment">${m}</span>`)
+  );
+
+  code = code.replace(/^\s*\/\/.*$/gm, m =>
+    store(`<span class="tok-comment">${m}</span>`)
+  );
+
+  // 2. STRINGS
+  code = code.replace(/"(?:\\.|[^"\\])*"/g, m =>
+    store(`<span class="tok-string">${m}</span>`)
+  );
+
+  // 3. NUMBERS
+  code = code.replace(/\b\d+\.\d+\b/g,
+    m => store(`<span class="tok-number">${m}</span>`)
+  );
+
+  code = code.replace(/\b\d+\b/g,
+    m => store(`<span class="tok-number">${m}</span>`)
+  );
+
+  // 4. BOOLEANS
+  code = code.replace(/\b(true|false)\b/g,
+    m => store(`<span class="tok-boolean">${m}</span>`)
+  );
+
+  // 5. KEYWORDS
+  code = code.replace(/\b(var|globalvar|teamvar|playerWeather|playerTime|displayNametag|launchTarget|changeVelocity|dropItem|define|loop|stat|globalstat|chat|if|random|giveItem|removeItem|tp|compassTarget|applyLayout|applyPotion|enchant|actionBar|cancelEvent|changeHealth|changePlayerGroup|clearEffects|title|failParkour|fullHeal|xpLevel|houseSpawn|kill|parkCheck|sound|resetInventory|lobby|gamemode|hungerLevel|maxHealth|function|consumeItem|displayMenu|closeMenu|pause|setTeam|teamstat|balanceTeam|goto|else|exit)\b/g,
+    m => store(`<span class="tok-keyword">${m}</span>`)
+  );
+
+  // 6. OPERATORS
+  code = code.replace(/\b(increment|decrement|set|multiply|divide|inc|dec|mult|div|shl|shr|unset)\b/g,
+    m => store(`<span class="tok-operator">${m}</span>`)
+  );
+
+  code = code.replace(/(\+=|-=|\*=|\/=|==|!=|<=|>=|=)/g,
+    m => store(`<span class="tok-operator">${m}</span>`)
+  );
+
+  // 7. LOGICAL
+  code = code.replace(/\b(and|or)\b/g,
+    m => store(`<span class="tok-operator">${m}</span>`)
+  );
+
+  // 8. FUNCTIONS
+  code = code.replace(/\b(stat|globalstat|gamemode|hasItem|hasPotion|doingParkour|inRegion|hasPermission|hasGroup|damageCause|blockType|isSneaking|health|maxHealth|hunger|damageAmount|placeholder|teamstat|hasTeam|isFlying|fishingEnv|isItem|canPvp|portal)\b/g,
+    m => store(`<span class="tok-function">${m}</span>`)
+  );
+
+  // 9. VARIABLES
+  code = code.replace(/(?<=\b(stat|globalstat|teamstat|var|globalvar|teamvar)\s)\w+/g,
+    m => store(`<span class="tok-variable">${m}</span>`)
+  );
+
+  code = code.replace(/(?<=\bdefine\s)\w+/g,
+    m => store(`<span class="tok-variable">${m}</span>`)
+  );
+
+  code = code.replace(/(?<=\bloop \d+\s)\w+/g,
+    m => store(`<span class="tok-variable">${m}</span>`)
+  );
+
+  return restore(code);
+}
+
+    loadAddon();
+  </script>
+</body>
+</html>

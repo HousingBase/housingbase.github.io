@@ -1,123 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="/image/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
-  <title>Create | HousingBase</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Project | HousingBase</title>
+  <link rel="icon" href="/image/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    body { overflow-x: hidden; }
+
+    .create-wrap { min-height: calc(100vh - 56px); display: flex; align-items: flex-start; justify-content: center; padding: 5rem 1.5rem 3rem; position: relative; z-index: 2; }
+
+    .create-shell { width: 100%; max-width: 640px; }
+
+    .create-header { margin-bottom: 2rem; }
+    .create-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.2rem; }
+    .create-header p { color: #555; font-size: 0.86rem; margin: 0; }
+
+    .steps-bar { display: flex; align-items: center; gap: 0; margin-bottom: 2rem; }
+    .step-item { display: flex; align-items: center; gap: 0; flex: 1; }
+    .step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #444; transition: all 0.25s; flex-shrink: 0; }
+    .step-dot.done { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .step-dot.active { border-color: var(--blue); color: var(--blue); background: rgba(37,100,235,0.1); }
+    .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.06); margin: 0 6px; transition: background 0.25s; }
+    .step-line.done { background: var(--blue); }
+    .step-label { font-size: 0.72rem; color: #444; margin-top: 4px; white-space: nowrap; }
+    .step-label.active { color: #90b8ff; }
+    .step-label.done { color: #555; }
+    .steps-labels { display: flex; gap: 0; margin-bottom: 1.8rem; }
+    .step-label-item { flex: 1; text-align: center; font-size: 0.72rem; color: #333; padding: 0 4px; transition: color 0.25s; }
+    .step-label-item.active { color: #90b8ff; font-weight: 600; }
+    .step-label-item.done { color: #555; }
+
+    .create-card { background: rgba(8,8,8,0.9); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; backdrop-filter: blur(16px); box-shadow: 0 16px 60px rgba(0,0,0,0.5); }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    .step-title { font-size: 1rem; font-weight: 700; margin: 0 0 0.3rem; }
+    .step-sub { color: #555; font-size: 0.84rem; margin: 0 0 1.4rem; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.76rem; font-weight: 700; color: #555; margin-bottom: 0.38rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .form-label .opt { color: #333; font-weight: 400; text-transform: none; font-size: 0.72rem; }
+    .input-wrap { position: relative; }
+    .input-wrap input, .input-wrap textarea, .input-wrap select {
+      width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.65rem 0.9rem; color: var(--text);
+      font-size: 0.9rem; font-family: "Inter",sans-serif;
+      transition: all 0.18s; box-sizing: border-box;
+    }
+    .input-wrap textarea { resize: vertical; min-height: 90px; padding-right: 0.9rem; font-size: 0.86rem; line-height: 1.5; }
+    .input-wrap input::placeholder, .input-wrap textarea::placeholder { color: #252525; }
+    .input-wrap input:focus, .input-wrap textarea:focus, .input-wrap select:focus { outline: none; border-color: var(--blue); background: rgba(37,100,235,0.05); box-shadow: 0 0 0 3px rgba(37,100,235,0.1); }
+    .input-wrap select { cursor: pointer; }
+    .input-wrap select option { background: #111; }
+    .char-counter { position: absolute; right: 9px; top: 10px; font-size: 0.7rem; color: #2a2a2a; pointer-events: none; }
+    .char-counter.full { color: #f59e0b; }
+
+    .drop-zone { border: 2px dashed rgba(255,255,255,0.09); border-radius: 11px; padding: 2.2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.01); }
+    .drop-zone:hover, .drop-zone.over { border-color: var(--blue); background: var(--blue-dim); box-shadow: 0 0 0 4px rgba(37,100,235,0.06); }
+    .drop-zone-icon { width: 48px; height: 48px; margin: 0 auto 0.8rem; color: #222; transition: color 0.2s; }
+    .drop-zone:hover .drop-zone-icon, .drop-zone.over .drop-zone-icon { color: var(--blue); }
+    .drop-zone p { color: #444; font-size: 0.86rem; margin: 0.2rem 0; }
+    .drop-zone p strong { color: var(--blue); }
+    .drop-zone code { color: #333; }
+
+    .file-chip { display: none; align-items: center; gap: 9px; background: var(--blue-dim); border: 1px solid var(--blue-border); border-radius: 9px; padding: 10px 14px; margin-top: 10px; font-size: 0.86rem; color: #90b8ff; }
+    .file-chip.visible { display: flex; }
+    .file-chip .chip-name { flex: 1; font-weight: 500; }
+    .file-chip .chip-size { color: #2a4a7a; font-size: 0.78rem; }
+    .chip-remove { cursor: pointer; color: #2a4a7a; transition: color 0.15s; flex-shrink: 0; }
+    .chip-remove:hover { color: #f87171; }
+
+    .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .cat-opt { border: 1px solid var(--border); border-radius: 9px; padding: 0.7rem 0.5rem; cursor: pointer; text-align: center; transition: all 0.18s; background: rgba(255,255,255,0.01); }
+    .cat-opt:hover { border-color: var(--border-hover); }
+    .cat-opt.on { border-color: var(--blue); background: var(--blue-dim); }
+    .cat-opt .cat-icon { display: flex; align-items: center; justify-content: center; color: #333; margin-bottom: 4px; transition: color 0.18s; }
+    .cat-opt.on .cat-icon { color: var(--blue); }
+    .cat-opt .cat-name { font-size: 0.72rem; color: #555; font-weight: 500; transition: color 0.18s; }
+    .cat-opt.on .cat-name { color: #90b8ff; }
+
+    .vis-grid { display: flex; flex-direction: column; gap: 8px; }
+    .vis-row { display: flex; align-items: flex-start; gap: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; cursor: pointer; transition: all 0.18s; background: rgba(255,255,255,0.01); }
+    .vis-row:hover { border-color: var(--border-hover); }
+    .vis-row.on { border-color: var(--blue); background: var(--blue-dim); }
+    .vis-row-icon { width: 16px; height: 16px; color: #333; flex-shrink: 0; margin-top: 1px; transition: color 0.18s; }
+    .vis-row.on .vis-row-icon { color: var(--blue); }
+    .vis-row-text {}
+    .vis-row-title { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .vis-row-desc { font-size: 0.78rem; color: #555; line-height: 1.4; }
+
+    .preview-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; }
+    .preview-box .pv-name { font-size: 1.1rem; font-weight: 700; margin: 0 0 4px; }
+    .preview-box .pv-desc { font-size: 0.84rem; color: #666; margin: 0 0 0.8rem; }
+    .preview-box .pv-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pv-file-name { font-size: 0.78rem; color: #444; margin-top: 0.5rem; }
+
+    .step-actions { display: flex; gap: 8px; justify-content: space-between; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,0.05); }
+    .step-actions .left { display: flex; gap: 8px; }
+    .step-actions .right { display: flex; gap: 8px; }
+
+    #upload-progress { display: none; margin-top: 0.8rem; }
+    #upload-progress .prog-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+    #upload-progress .prog-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width 0.3s; width: 0%; }
+    #upload-progress .prog-label { font-size: 0.78rem; color: #555; margin-top: 6px; text-align: center; }
+
+    #upload-status { font-size: 0.84rem; text-align: center; margin-top: 0.6rem; min-height: 1em; }
+    #upload-status.ok { color: #4ade80; }
+    #upload-status.err { color: #f87171; }
+
+    .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .warn-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.2s; backdrop-filter: blur(6px); }
+    .warn-overlay.show { opacity: 1; visibility: visible; }
+    .warn-box { background: #0d0d0d; border: 1px solid var(--border); border-radius: var(--radius-lg); width: 90%; max-width: 380px; overflow: hidden; }
+
+    @media (max-width: 480px) {
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .create-card { padding: 1.4rem 1.2rem; }
+    }
+  </style>
 </head>
-
 <body>
-  <!-- Header -->
-  <img src="/image/header.png" alt="Header Banner" class="header-img">
   <header>
-
-    <div class="header-container">
-      <a href="/index.html">
-        <div class="logo-container">
-          <img src="/image/blueblue.png" alt="HousingBase Logo" class="logo-default">
-          <img src="/image/blueblue.png" alt="HousingBase Logo Hover" class="logo-hover">
-        </div>
-      </a>
-
-      <nav class="nav-links">
-        <a href="/browser.html">HTSL Library</a>
-        <a href="/projects.html">Our Projects</a>
-        <a href="/housing.html">Browse Housing</a>
-        <a href="/create.html">Dashboard</a>
-      </nav>
-
-      <div class="user-status">
-        <div id="logged-out" style="display:flex; align-items:center;">
-          <a href="/login.html"><button id="signInBtnHeader">Login</button></a>
-          <div style="margin-left: 5px;"></div>
-          <a href="/register.html"><button id="registerBtnHeader">Register</button></a>
-        </div>
-        <div id="logged-in" style="display:none; align-items:center;">
-          <img id="avatarSmall" width="32" height="32" alt="Avatar" class="avatar-small">
-          <span id="displayName" class="display-name"></span>
-        </div>
+    <div class="logo"><a href="/index.html"><img src="image/blueblue.png" alt="HousingBase" /></a></div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+    <nav class="nav-links">
+      <a href="/housing.html">Housing Browser</a>
+      <a href="/fcm.html">FCM</a>
+      <a href="/news.html">News</a>
+      <a href="/browser.html">HTSL Library</a>
+      <a href="/dashboard.html">Dashboard</a>
+      <div id="logged-out" style="display:flex;align-items:center;"><a href="/login.html"><button class="primary-btn">Sign In</button></a></div>
+      <div id="logged-in" style="display:none;align-items:center;">
+        <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px;cursor:pointer;margin-left:8px;" />
+        <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
       </div>
-
-      <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
+    </nav>
   </header>
 
-  <div id="announcement" style="display:none;"></div>
+  <div id="announcement"></div>
 
-
-  <main class="container">
-    <h3>Upload a new HTSL File</h3>
-    <section id="upload-section">
-      <div id="drop-area">
-        <p>Drag & Drop your .htsl file here or</p>
-        <p>click to select a file from explorer.</p>
-        <input type="file" id="addonFile" accept=".htsl" hidden>
-      </div>
-      <div id="file-name" style="margin-bottom: 10px; color: #333;"></div>
-
-      <label for="addonName">Project Name</label>
-      <input class="InputNew" id="addonName" placeholder="Project name" maxlength="30" required>
-      <span id="nameCounter" class="char-counter">0 / 30</span>
-
-      <label for="addonDesc">Project Description</label>
-      <input class="InputNew" id="addonDesc" placeholder="Description (optional)" maxlength="80">
-      <span id="descCounter" class="char-counter">0 / 80</span>
-
-      <button id="uploadBtn" class="blue-btn">Upload</button>
-      <a href="index.html"><button id="cancel-btn" class="del-btn">Cancel</button></a>
-      <span id="upload-status" style="display:block; margin-top:10px;"></span>
-
-
-
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <div class="social-links">
-        <a class="yt" href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube">
-          <i class="fab fa-youtube"></i>
-        </a>
-        <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
+  <div class="create-wrap">
+    <div class="create-shell">
+      <div class="create-header">
+        <h1>Upload <span class="editor-title">HTSL</span> Project</h1>
+        <p>Share your housing code with the HousingBase community.</p>
       </div>
 
-
-      <div class="section-divider"></div>
-      <p class="info"><a href="/index.html">About</a> <a href="/contact.html">Contact</a> <a
-          href="/terms.html">Terms</a></p>
-      <a>
-        <p>-</p>
-      </a>
-      <p>&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
-    </div>
-  </footer>
-  <div id="warn-overlay"> <!-- temp solution for dev -->
-    <div id="warn-box">
-      <div class="warn-header">
-        <h3>Access Denied</h3>
+      <div class="steps-bar">
+        <div class="step-item">
+          <div class="step-dot active" id="dot-0">1</div>
+          <div class="step-line" id="line-0"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot" id="dot-1">2</div>
+          <div class="step-line" id="line-1"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot" id="dot-2">3</div>
+          <div class="step-line" id="line-2"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot" id="dot-3">4</div>
+          <div class="step-line" style="display:none;"></div>
+        </div>
       </div>
-      <div class="warn-body">
-        <p>You must be verified and signed in to upload and distribute in the HTSL Library. Sign in <a class="user-link"  href="/login.html">here</a>, or <a class="user-link"  href="/register.html">create a new account</a>.</p>
-        <button id="warn-continue" class="blue-btn" style="margin-top:12px; font-size:1rem;">Continue</button>
+      <div class="steps-labels">
+        <div class="step-label-item active" id="lbl-0">File</div>
+        <div class="step-label-item" id="lbl-1">Details</div>
+        <div class="step-label-item" id="lbl-2">Settings</div>
+        <div class="step-label-item" id="lbl-3">Review</div>
+      </div>
+
+      <div class="create-card">
+
+        <div class="step-panel active" id="step-0">
+          <h2 class="step-title">Upload your HTSL file</h2>
+          <p class="step-sub">Select the .htsl file you want to share. Max 5 MB.</p>
+
+          <div class="drop-zone" id="drop-zone">
+            <div class="drop-zone-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="10 13 8 15 10 17"/><polyline points="14 13 16 15 14 17"/></svg>
+            </div>
+            <p><strong>Click to browse</strong> or drag &amp; drop</p>
+            <p>Only <code>.htsl</code> files</p>
+            <input type="file" id="addonFile" accept=".htsl" hidden />
+          </div>
+
+          <div class="file-chip" id="file-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="chip-name" id="chip-name"></span>
+            <span class="chip-size" id="chip-size"></span>
+            <svg class="chip-remove" id="chip-remove" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+
+          <div class="step-actions">
+            <div class="left"><a href="/browser.html"><button class="secondary-btn" style="padding:0.62rem 1rem;">Cancel</button></a></div>
+            <div class="right"><button class="primary-btn" id="step0-next" disabled>Next →</button></div>
+          </div>
+        </div>
+
+        <div class="step-panel" id="step-1">
+          <h2 class="step-title">Name &amp; describe your project</h2>
+          <p class="step-sub">Choose a clear name and write a description. Markdown is supported in the description.</p>
+
+          <div class="form-group">
+            <label class="form-label">Project Name</label>
+            <div class="input-wrap">
+              <input type="text" id="addonName" placeholder="My awesome housing…" maxlength="30" autocomplete="off" />
+              <span class="char-counter" id="nameCounter">0/30</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Short Description <span class="opt">(shown on cards — max 50 chars)</span></label>
+            <div class="input-wrap">
+              <input type="text" id="addonShortDesc" placeholder="One-line summary of your project…" maxlength="50" autocomplete="off" />
+              <span class="char-counter" id="shortDescCounter">0/50</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Full Description <span class="opt">(optional — markdown supported, shown on project page)</span></label>
+            <div class="input-wrap">
+              <textarea id="addonDesc" placeholder="Describe what your HTSL does. You can use **bold**, *italic*, # headings, - lists, and `code`." maxlength="2000"></textarea>
+              <span class="char-counter" id="descCounter" style="top:auto;bottom:8px;">0/2000</span>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <div class="left"><button class="secondary-btn" id="step1-back" style="padding:0.62rem 1rem;">← Back</button></div>
+            <div class="right"><button class="primary-btn" id="step1-next">Next →</button></div>
+          </div>
+        </div>
+
+        <div class="step-panel" id="step-2">
+          <h2 class="step-title">Category &amp; visibility</h2>
+          <p class="step-sub">Help people find your project, and choose who can see it.</p>
+
+          <div class="form-group">
+            <label class="form-label">Game Version</label>
+            <div class="vis-grid" id="gv-grid">
+              <div class="vis-row on" data-gv="legacy">
+                <svg class="vis-row-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <div class="vis-row-text">
+                  <div class="vis-row-title">1.8.9 (Legacy)</div>
+                  <div class="vis-row-desc">Classic HTSL for Hypixel Housing on Minecraft 1.8.9. The original, widely used version.</div>
+                </div>
+              </div>
+              <div class="vis-row" data-gv="reborn">
+                <svg class="vis-row-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <div class="vis-row-text">
+                  <div class="vis-row-title">HTSL Reborn</div>
+                  <div class="vis-row-desc">The new HTSL format with expanded features for modern minecraft.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <div class="cat-grid" id="cat-grid"></div>
+          </div>
+
+          <div class="form-group" style="margin-top:1.2rem;">
+            <label class="form-label">Visibility</label>
+            <div class="vis-grid">
+              <div class="vis-row on" data-v="public">
+                <svg class="vis-row-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <div class="vis-row-text">
+                  <div class="vis-row-title">Public</div>
+                  <div class="vis-row-desc">Anyone can find and download your project in the HTSL Library.</div>
+                </div>
+              </div>
+              <div class="vis-row" data-v="unlisted">
+                <svg class="vis-row-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <div class="vis-row-text">
+                  <div class="vis-row-title">Unlisted</div>
+                  <div class="vis-row-desc">Only people with the direct link can view it. Won't appear in search.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <div class="left"><button class="secondary-btn" id="step2-back" style="padding:0.62rem 1rem;">← Back</button></div>
+            <div class="right"><button class="primary-btn" id="step2-next">Next →</button></div>
+          </div>
+        </div>
+
+        <div class="step-panel" id="step-3">
+          <h2 class="step-title">Review &amp; upload</h2>
+          <p class="step-sub">Double-check everything looks right before uploading.</p>
+
+          <div class="preview-box">
+            <div class="pv-badges" id="pv-badges" style="margin-bottom:8px;"></div>
+            <div class="pv-name" id="pv-name"></div>
+            <div class="pv-desc" id="pv-desc"></div>
+            <div class="pv-file-name" id="pv-file"></div>
+          </div>
+
+          <div id="upload-progress">
+            <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+            <div class="prog-label" id="prog-label">Uploading…</div>
+          </div>
+          <div id="upload-status"></div>
+
+          <div class="step-actions">
+            <div class="left"><button class="secondary-btn" id="step3-back" style="padding:0.62rem 1rem;">← Back</button></div>
+            <div class="right">
+              <button class="primary-btn" id="uploadBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;vertical-align:middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload Project
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <img src="/image/fullwhite.png" alt="HousingBase" class="footer-logo" />
+        <div class="social-icons">
+          <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/><path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/></svg></a>
+          <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-links"><a href="/index.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms</a></div>
+      <p class="footer-credit">&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
+    </div>
+  </footer>
 
-  <script src="/script.js"></script>
-  <script src="/create.js"></script>
+  <div id="warn-overlay" class="warn-overlay">
+    <div class="warn-box">
+      <div class="warn-header"><h3>Sign In Required</h3></div>
+      <div class="warn-body">
+        <p>You need to be signed in and verified to upload projects.</p>
+        <p style="margin-top:6px;"><a href="/login.html">Sign in</a> or <a href="/register.html">create an account</a>.</p>
+        <button class="primary-btn" id="warn-continue" style="margin-top:12px;width:100%;">Go Back</button>
+      </div>
+    </div>
+  </div>
 
+  <script src="script.js"></script>
+  <script>
+    const API_BASE_C = "https://housingbase-71z.onrender.com";
+    const CATS = ["general","minigames","pvp","showcase","tools","moderation","other"];
+    const CAT_ICONS_SVG = {
+      general:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+      tools:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+      minigames:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>`,
+      moderation:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+      parkour:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M5 21l4-7 3 3 2-4 3 7"/><path d="M9 14l-2-5 5-2 2 4"/></svg>`,
+      pvp:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+      roleplay:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/></svg>`,
+      showcase:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+      other:`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+    };
+
+    const catGrid = document.getElementById("cat-grid");
+    CATS.forEach(c => {
+      const el = document.createElement("div");
+      el.className = "cat-opt" + (c === "general" ? " on" : "");
+      el.dataset.c = c;
+      el.innerHTML = `<div class="cat-icon">${CAT_ICONS_SVG[c]}</div><div class="cat-name">${c.charAt(0).toUpperCase()+c.slice(1)}</div>`;
+      el.addEventListener("click", () => {
+        document.querySelectorAll(".cat-opt").forEach(o => o.classList.remove("on"));
+        el.classList.add("on");
+      });
+      catGrid.appendChild(el);
+    });
+
+    document.querySelectorAll(".vis-row[data-v]").forEach(row => {
+      row.addEventListener("click", () => {
+        document.querySelectorAll(".vis-row[data-v]").forEach(r => r.classList.remove("on"));
+        row.classList.add("on");
+      });
+    });
+
+    document.querySelectorAll(".vis-row[data-gv]").forEach(row => {
+      row.addEventListener("click", () => {
+        document.querySelectorAll(".vis-row[data-gv]").forEach(r => r.classList.remove("on"));
+        row.classList.add("on");
+      });
+    });
+
+    let currentStep = 0;
+
+    function goStep(n) {
+      document.querySelectorAll(".step-panel").forEach((p, i) => p.classList.toggle("active", i === n));
+      for (let i = 0; i <= 3; i++) {
+        const dot = document.getElementById("dot-"+i);
+        const lbl = document.getElementById("lbl-"+i);
+        dot.classList.remove("active","done");
+        lbl.classList.remove("active","done");
+        if (i < n) { dot.classList.add("done"); lbl.classList.add("done"); dot.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`; }
+        else if (i === n) { dot.classList.add("active"); lbl.classList.add("active"); dot.textContent = i+1; }
+        else { dot.textContent = i+1; }
+        if (i < 3) {
+          const line = document.getElementById("line-"+i);
+          if (line) line.classList.toggle("done", i < n);
+        }
+      }
+      currentStep = n;
+    }
+
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("addonFile");
+    const fileChip = document.getElementById("file-chip");
+    const step0Next = document.getElementById("step0-next");
+
+    function fmtBytes(b) { if(b<1024) return b+" B"; if(b<1048576) return (b/1024).toFixed(1)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
+
+    function setFile(f) {
+      if (!f.name.endsWith(".htsl")) { showToast("Only .htsl files are allowed","error"); return; }
+      document.getElementById("chip-name").textContent = f.name;
+      document.getElementById("chip-size").textContent = fmtBytes(f.size);
+      fileChip.classList.add("visible");
+      dropZone.style.display = "none";
+      step0Next.disabled = false;
+    }
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("over"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("over"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault(); dropZone.classList.remove("over");
+      const f = e.dataTransfer.files[0];
+      if (f) { const dt = new DataTransfer(); dt.items.add(f); fileInput.files = dt.files; setFile(f); }
+    });
+    fileInput.addEventListener("change", () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+    document.getElementById("chip-remove").addEventListener("click", () => {
+      fileInput.value = "";
+      fileChip.classList.remove("visible");
+      dropZone.style.display = "";
+      step0Next.disabled = true;
+    });
+
+    function bindCounter(id, cid, max) {
+      const i = document.getElementById(id), c = document.getElementById(cid);
+      i.addEventListener("input", () => { const l = i.value.length; c.textContent = `${l}/${max}`; c.classList.toggle("full", l >= max); });
+    }
+    bindCounter("addonName","nameCounter",30);
+    bindCounter("addonShortDesc","shortDescCounter",50);
+    bindCounter("addonDesc","descCounter",2000);
+
+    document.getElementById("step0-next").addEventListener("click", () => goStep(1));
+    document.getElementById("step1-back").addEventListener("click", () => goStep(0));
+    document.getElementById("step1-next").addEventListener("click", () => {
+      const name = document.getElementById("addonName").value.trim();
+      if (!name) { showToast("Project name is required","error"); return; }
+      goStep(2);
+    });
+    document.getElementById("step2-back").addEventListener("click", () => goStep(1));
+    document.getElementById("step2-next").addEventListener("click", () => {
+      updatePreview();
+      goStep(3);
+    });
+    document.getElementById("step3-back").addEventListener("click", () => goStep(2));
+
+    function updatePreview() {
+      const name      = document.getElementById("addonName").value.trim();
+      const shortDesc = document.getElementById("addonShortDesc").value.trim();
+      const desc      = document.getElementById("addonDesc").value.trim();
+      const cat       = document.querySelector(".cat-opt.on")?.dataset.c || "general";
+      const vis       = document.querySelector(".vis-row[data-v].on")?.dataset.v || "public";
+      const gv        = document.querySelector(".vis-row[data-gv].on")?.dataset.gv || "legacy";
+      const file      = fileInput.files[0];
+
+      document.getElementById("pv-name").textContent = name || "Untitled";
+      document.getElementById("pv-desc").textContent = shortDesc || (desc ? (desc.length > 80 ? desc.slice(0,80)+"…" : desc) : "No description");
+      document.getElementById("pv-file").textContent = file ? file.name : "";
+
+      const badgesEl = document.getElementById("pv-badges");
+      badgesEl.innerHTML = "";
+      const gvb = document.createElement("span");
+      gvb.className = "category-badge gv-badge";
+      gvb.textContent = gv === "reborn" ? "HTSL Reborn" : "1.8.9 Legacy";
+      badgesEl.appendChild(gvb);
+      const cb = document.createElement("span");
+      cb.className = "category-badge";
+      cb.textContent = cat.charAt(0).toUpperCase()+cat.slice(1);
+      badgesEl.appendChild(cb);
+      if (vis !== "public") {
+        const vb = document.createElement("span");
+        vb.className = `category-badge vis-badge-${vis}`;
+        vb.textContent = vis.charAt(0).toUpperCase()+vis.slice(1);
+        badgesEl.appendChild(vb);
+      }
+    }
+
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+      const btn  = document.getElementById("uploadBtn");
+      const name = document.getElementById("addonName").value.trim();
+      const desc = document.getElementById("addonDesc").value.trim();
+      const cat  = document.querySelector(".cat-opt.on")?.dataset.c || "general";
+      const vis  = document.querySelector(".vis-row[data-v].on")?.dataset.v || "public";
+      const file = fileInput.files[0];
+
+      if (!file||!name) { showToast("Missing file or name","error"); return; }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Uploading…`;
+
+      const prog = document.getElementById("upload-progress");
+      const fill = document.getElementById("prog-fill");
+      const lbl  = document.getElementById("prog-label");
+      prog.style.display = "block";
+
+      let pct = 0;
+      const interval = setInterval(() => {
+        pct = Math.min(pct + Math.random()*15, 85);
+        fill.style.width = pct + "%";
+      }, 200);
+
+      function setStatus(msg, cls) {
+        const el = document.getElementById("upload-status");
+        el.textContent = msg; el.className = cls||"";
+      }
+
+      const shortDesc = document.getElementById("addonShortDesc").value.trim();
+      const gv        = document.querySelector(".vis-row[data-gv].on")?.dataset.gv || "legacy";
+
+      const form = new FormData();
+      form.append("name", name);
+      form.append("short_description", shortDesc);
+      form.append("description", desc);
+      form.append("category", cat);
+      form.append("visibility", vis);
+      form.append("game_version", gv);
+      form.append("file", file);
+
+      try {
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${API_BASE_C}/api/addons`, { method:"POST", headers:{ Authorization:`Bearer ${token}` }, body: form });
+        const data = await res.json().catch(() => ({}));
+        clearInterval(interval);
+        if (res.ok) {
+          fill.style.width = "100%";
+          lbl.textContent = "Upload complete!";
+          setStatus("Project uploaded successfully!", "ok");
+          btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;vertical-align:middle;"><polyline points="20 6 9 17 4 12"/></svg> Done!`;
+          setTimeout(() => location.href = "/dashboard.html", 1500);
+        } else {
+          prog.style.display = "none";
+          setStatus(data.error||"Upload failed.","err");
+          btn.disabled = false;
+          btn.innerHTML = `Upload Project`;
+        }
+      } catch (err) {
+        clearInterval(interval);
+        prog.style.display = "none";
+        setStatus("Network error: "+err.message,"err");
+        btn.disabled = false;
+        btn.innerHTML = `Upload Project`;
+      }
+    });
+
+    document.getElementById("warn-continue").addEventListener("click", () => location.href = "/browser.html");
+
+    (async () => {
+      const me = await getMe();
+      renderAuth(me);
+      if (!me) document.getElementById("warn-overlay").classList.add("show");
+    })();
+  </script>
 </body>
-
 </html>

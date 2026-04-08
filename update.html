@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Project | HousingBase</title>
+
+  <link rel="icon" href="/image/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Inter font to match create.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    body { overflow-x: hidden; }
+
+    /* EXACT same layout as create.html */
+    .create-wrap {
+      min-height: calc(100vh - 56px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 5rem 1.5rem 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .create-shell { width: 100%; max-width: 640px; }
+
+    .create-header { margin-bottom: 2rem; }
+    .create-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.2rem; }
+    .create-header p { color: #555; font-size: 0.86rem; margin: 0; }
+
+    .create-card {
+      background: rgba(8,8,8,0.9);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 60px rgba(0,0,0,0.5);
+    }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 0.38rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-wrap input,
+    .input-wrap textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: "Inter", sans-serif;
+      transition: all 0.18s;
+      box-sizing: border-box;
+    }
+
+    .input-wrap textarea {
+      resize: vertical;
+      min-height: 90px;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .input-wrap input:focus,
+    .input-wrap textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      background: rgba(37,100,235,0.05);
+      box-shadow: 0 0 0 3px rgba(37,100,235,0.1);
+    }
+
+    .char-counter {
+      position: absolute;
+      right: 9px;
+      top: 10px;
+      font-size: 0.7rem;
+      color: #2a2a2a;
+      pointer-events: none;
+    }
+
+    .char-counter.full { color: #f59e0b; }
+
+    @media (max-width: 480px) {
+      .create-card { padding: 1.4rem 1.2rem; }
+    }
+    .drop-zone {
+  border: 2px dashed rgba(255,255,255,0.09);
+  border-radius: 11px;
+  padding: 2.2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.01);
+}
+.drop-zone:hover,
+.drop-zone.over {
+  border-color: var(--blue);
+  background: var(--blue-dim);
+  box-shadow: 0 0 0 4px rgba(37,100,235,0.06);
+}
+.drop-zone-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 0.8rem;
+  color: #222;
+  transition: color 0.2s;
+}
+.drop-zone:hover .drop-zone-icon,
+.drop-zone.over .drop-zone-icon {
+  color: var(--blue);
+}
+.file-chip {
+  display: none;
+  align-items: center;
+  gap: 9px;
+  background: var(--blue-dim);
+  border: 1px solid var(--blue-border);
+  border-radius: 9px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-size: 0.86rem;
+  color: #90b8ff;
+}
+.file-chip.visible { display: flex; }
+.chip-name { flex: 1; font-weight: 500; }
+.chip-size { color: #2a4a7a; font-size: 0.78rem; }
+.chip-remove {
+  cursor: pointer;
+  color: #2a4a7a;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.chip-remove:hover { color: #f87171; }
+
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER (same as create.html) -->
+<header>
+  <div class="logo"><a href="/index.html"><img src="image/blueblue.png" alt="HousingBase" /></a></div>
+  <div class="hamburger"><span></span><span></span><span></span></div>
+  <nav class="nav-links">
+    <a href="/housing.html">Housing Browser</a>
+    <a href="/fcm.html">FCM</a>
+    <a href="/news.html">News</a>
+    <a href="/browser.html">HTSL Library</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/projects.html">Projects</a>
+
+    <div id="logged-out" style="display:flex;align-items:center;">
+      <a href="/login.html"><button class="primary-btn">Sign In</button></a>
+    </div>
+
+    <div id="logged-in" style="display:none;align-items:center;">
+      <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px;cursor:pointer;margin-left:8px;" />
+      <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
+    </div>
+  </nav>
+</header>
+
+<div class="create-wrap">
+  <div class="create-shell">
+
+    <div class="create-header">
+      <h1>Edit Project</h1>
+      <p>Update your existing HTSL project.</p>
+    </div>
+
+    <div class="create-card">
+
+      <!-- FILE -->
+<!-- FILE (IDENTICAL TO CREATE.HTML) -->
+<div class="form-group">
+  <label class="form-label">Replace File (optional)</label>
+
+  <div class="drop-zone" id="drop-zone">
+    <div class="drop-zone-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <polyline points="10 13 8 15 10 17"/>
+        <polyline points="14 13 16 15 14 17"/>
+      </svg>
+    </div>
+    <p><strong>Click to browse</strong> or drag & drop</p>
+    <p>Only <code>.htsl</code> files</p>
+    <input type="file" id="file" accept=".htsl" hidden />
+  </div>
+
+  <div class="file-chip" id="file-chip">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    <span class="chip-name" id="chip-name"></span>
+    <span class="chip-size" id="chip-size"></span>
+    <svg class="chip-remove" id="chip-remove" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </div>
+</div>
+
+
+      <!-- NAME -->
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <div class="input-wrap">
+          <input type="text" id="name" maxlength="30" />
+          <span class="char-counter" id="nameCounter">0/30</span>
+        </div>
+      </div>
+
+      <!-- SHORT DESC -->
+      <div class="form-group">
+        <label class="form-label">Short Description</label>
+        <div class="input-wrap">
+          <input type="text" id="short" maxlength="50" />
+          <span class="char-counter" id="shortCounter">0/50</span>
+        </div>
+      </div>
+
+      <!-- DESC -->
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <div class="input-wrap">
+          <textarea id="desc" maxlength="2000"></textarea>
+          <span class="char-counter" id="descCounter" style="top:auto;bottom:8px;">0/2000</span>
+        </div>
+      </div>
+
+      <button class="primary-btn" id="saveBtn">Save Changes</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER (same as create.html) -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <img src="/image/fullwhite.png" alt="HousingBase" class="footer-logo" />
+      <div class="social-icons">
+        <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/><path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/></svg>
+        </a>
+        <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="/index.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+
+    <p class="footer-credit">&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+
+<script>
+const API = "https://housingbase-71z.onrender.com";
+const id = new URLSearchParams(location.search).get("id");
+
+function bindCounter(id, cid, max) {
+  const i = document.getElementById(id), c = document.getElementById(cid);
+  i.addEventListener("input", () => {
+    const l = i.value.length;
+    c.textContent = `${l}/${max}`;
+    c.classList.toggle("full", l >= max);
+  });
+}
+
+bindCounter("name","nameCounter",30);
+bindCounter("short","shortCounter",50);
+bindCounter("desc","descCounter",2000);
+
+async function load() {
+  const token = localStorage.getItem("authToken");
+
+  const res = await fetch(`${API}/api/addons/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  if (!res.ok) {
+    location.href = "/dashboard.html";
+    return;
+  }
+
+  const a = await res.json();
+  const me = await getMe();
+
+  if (!me || (me.username !== a.username && !me.is_admin)) {
+    location.href = "/dashboard.html";
+    return;
+  }
+
+  document.getElementById("name").value = a.name;
+  document.getElementById("short").value = a.short_description || "";
+  document.getElementById("desc").value = a.description || "";
+
+  // update counters
+  document.getElementById("nameCounter").textContent = `${a.name.length}/30`;
+  document.getElementById("shortCounter").textContent = `${(a.short_description||"").length}/50`;
+  document.getElementById("descCounter").textContent = `${(a.description||"").length}/2000`;
+}
+
+document.getElementById("saveBtn").onclick = async () => {
+  const token = localStorage.getItem("authToken");
+
+  const form = new FormData();
+  form.append("name", document.getElementById("name").value);
+  form.append("short_description", document.getElementById("short").value);
+  form.append("description", document.getElementById("desc").value);
+
+  const file = document.getElementById("file").files[0];
+  if (file) form.append("file", file);
+
+  const res = await fetch(`${API}/api/addons/${id}`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: form
+  });
+
+  if (res.ok) {
+    location.href = "/dashboard.html";
+  } else {
+    alert("Failed to update");
+  }
+};
+
+load();
+</script>
+
+<script>
+const dropZone = document.getElementById("drop-zone");
+const fileInput = document.getElementById("file");
+const fileChip = document.getElementById("file-chip");
+
+function fmtBytes(b) {
+  if (b < 1024) return b + " B";
+  if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
+  return (b / 1048576).toFixed(1) + " MB";
+}
+
+function setFile(f) {
+  if (!f.name.endsWith(".htsl")) {
+    alert("Only .htsl files are allowed");
+    return;
+  }
+
+  document.getElementById("chip-name").textContent = f.name;
+  document.getElementById("chip-size").textContent = fmtBytes(f.size);
+
+  fileChip.classList.add("visible");
+  dropZone.style.display = "none";
+}
+
+dropZone.addEventListener("click", () => fileInput.click());
+
+dropZone.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropZone.classList.add("over");
+});
+
+dropZone.addEventListener("dragleave", () => {
+  dropZone.classList.remove("over");
+});
+
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("over");
+
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    const dt = new DataTransfer();
+    dt.items.add(f);
+    fileInput.files = dt.files;
+    setFile(f);
+  }
+});
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.files[0]) setFile(fileInput.files[0]);
+});
+
+document.getElementById("chip-remove").addEventListener("click", () => {
+  fileInput.value = "";
+  fileChip.classList.remove("visible");
+  dropZone.style.display = "";
+});
+</script>
+
+
+</body>
+</html>

@@ -1,65 +1,43 @@
+const API_BASE = "https://housingbase-71z.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
-  const registerBtn = document.getElementById("registerBtn");
   const status = document.getElementById("status");
 
-  registerBtn.addEventListener("click", async () => {
-    // Grab input values safely
-    const username = document.getElementById("username")?.value?.trim();
-    const displayName = document.getElementById("displayNameInput")?.value?.trim();
-    const email = document.getElementById("email")?.value?.trim();
-    const password = document.getElementById("password")?.value;
+  function setErr(msg) { status.textContent = msg; status.className = "auth-status err"; }
+  function setOk(msg) { status.textContent = msg; status.className = "auth-status ok"; }
+  function setInfo(msg) { status.textContent = msg; status.className = "auth-status"; }
 
-    // ----- Validation -----
-    if (!username || !/^[a-zA-Z0-9_]{1,20}$/.test(username)) {
-      status.textContent = "Usernames only support A-Z, 0-9 and _.";
-      status.style.color = "#c62828";
-      return;
-    }
+  document.getElementById("registerBtn").addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
+    const displayName = document.getElementById("displayNameInput").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-    if (!displayName || displayName.length > 30) {
-      status.textContent = "Display Name must be 1-30 characters.";
-      status.style.color = "#c62828";
-      return;
-    }
+    if (!username || !/^[a-zA-Z0-9_]{1,20}$/.test(username)) return setErr("Username must be 1-20 characters (A-Z, 0-9, _).");
+    if (!displayName || displayName.length > 32) return setErr("Display name must be 1-32 characters.");
+    if (!email || !email.includes("@")) return setErr("Enter a valid email address.");
+    if (!password || password.length < 6) return setErr("Password must be at least 6 characters.");
 
-    if (!email || !email.includes("@")) {
-      status.textContent = "Enter a valid email address.";
-      status.style.color = "#c62828";
-      return;
-    }
-
-    if (!password || password.length < 6) {
-      status.textContent = "Password must be at least 6 characters.";
-      status.style.color = "#c62828";
-      return;
-    }
-
-    status.textContent = "Creating account...";
-    status.style.color = "#000";
+    setInfo("Creating account…");
 
     try {
-      // ----- Register user without hCaptcha -----
       const res = await fetch(`${API_BASE}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, displayName, email, password })
       });
-
       const data = await res.json();
 
-      if (!res.ok) {
-        status.textContent = data.error || "Something went wrong during registration.";
-        status.style.color = "#c62828";
-        return;
-      }
+      if (!res.ok) return setErr(data.error || "Registration failed.");
 
-      // ----- Redirect to login page -----
-      window.location.href = "/login.html";
-
-    } catch (err) {
-      console.error(err);
-      status.textContent = "Oops! An error occurred: " + err.message;
-      status.style.color = "#c62828";
+      setOk("Account created! Check your email to verify, then sign in.");
+      setTimeout(() => location.href = "/login.html", 3000);
+    } catch {
+      setErr("Something went wrong. Try again.");
     }
+  });
+
+  document.getElementById("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("registerBtn").click();
   });
 });

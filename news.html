@@ -1,177 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/image/favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap"
-        rel="stylesheet" />
-    <title>Home | HousingBase</title>
-
-    <style>
-        body {
-            overflow-x: hidden;
-        }
-
-        #typedText {
-            font-family: monospace;
-            background-color: rgb(19, 19, 19);
-            color: rgb(236, 236, 236);
-            white-space: nowrap;
-            z-index: 3;
-        }
-
-        #typewriter {
-            white-space: nowrap;
-            display: inline-block;
-            background-color: rgb(19, 19, 19);
-            padding-right: 7px;
-            padding-left: 2px;
-            z-index: 3;
-        }
-
-        #cursor {
-            display: inline-block;
-            opacity: 1;
-            animation: blink 1s step-start infinite;
-        }
-
-        #cursor.hidden {
-            opacity: 0;
-        }
-
-        @keyframes blink {
-
-            0%,
-            50%,
-            100% {
-                opacity: 1;
-            }
-
-            25%,
-            75% {
-                opacity: 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/image/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <title>News | HousingBase</title>
+  <style>
+    body { overflow-x: hidden; }
+    .news-wrap { max-width: 780px; margin: 0 auto; padding: 6rem 1.5rem 3rem; position: relative; z-index: 2; }
+    .news-header { margin-bottom: 2.5rem; }
+    .news-header h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.3rem; }
+    .news-header p { color: #555; font-size: 0.9rem; margin: 0; }
+    .news-feed { display: flex; flex-direction: column; gap: 1px; }
+    .news-post {
+      background: rgba(10,10,10,0.75);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    .news-post:hover { border-color: rgba(255,255,255,0.13); }
+    .news-post-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.7rem; }
+    .news-post-title { font-size: 1.2rem; font-weight: 700; color: #eee; margin: 0; }
+    .news-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 99px; background: rgba(37,100,235,0.15); border: 1px solid rgba(37,100,235,0.3); color: #90b8ff; white-space: nowrap; }
+    .news-tag.green { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: #4ade80; }
+    .news-tag.orange { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.3); color: #fb923c; }
+    .news-meta { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #444; margin-bottom: 1rem; }
+    .news-meta a { color: #2564eb; text-decoration: none; }
+    .news-meta a:hover { color: #90b8ff; }
+    .news-body { color: #888; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.2rem; }
+    .news-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .news-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 1.4rem 0; }
+  </style>
 </head>
-
 <body>
-    <div class="dot-background"></div>
   <header>
-    <div class="logo">
-  <a href="/index.html" style="display: inline-block;">
-    <img src="image/blueblue.png" alt="HousingBase Logo">
-  </a>
-</div>
-
-    <div class="hamburger">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+    <div class="logo"><a href="/index.html"><img src="image/blueblue.png" alt="HousingBase Logo"></a></div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
     <nav class="nav-links">
       <a href="/housing.html">Housing Browser</a>
+      <a href="/fcm.html">FCM</a>
       <a href="/news.html">News</a>
       <a href="/browser.html">HTSL Library</a>
       <a href="/dashboard.html">Dashboard</a>
       <a href="/projects.html">Projects</a>
-      
-      <div id="logged-out" style="display:flex; align-items:center;">
-       <a href="/login.html"><button class="primary-btn" id="signInBtnHeader">Sign In</button></a>
+      <div id="logged-out" style="display:flex;align-items:center;">
+        <a href="/login.html"><button class="primary-btn">Sign In</button></a>
       </div>
-      <div id="logged-in" style="display:none; align-items:center;">
-        <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px; cursor:pointer; margin-left:8px;">
-        <span id="displayName" style="margin-left:8px; font-weight:bold; color:#fff; cursor:pointer; display: none;"></span>
+      <div id="logged-in" style="display:none;align-items:center;">
+        <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px;cursor:pointer;margin-left:8px;">
+        <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
       </div>
     </nav>
   </header>
-    <div id="announcement" style="display:none;"></div>
 
-    <section class="promo" style="margin-top: 20px;;">
-        <h2>HousingBase <span class="highlight">News.</span></h2>
-        <h3>Receive latest updates about HousingBase, or <a href="https://hypixel.net/housing/">Hypixel Housing</a>.
-        </h3>
-    </section>
-    <section class="grid1">
-                 <div class="update-card">
-            <h2 class="title">Closed Alpha ended - Open Beta!</h2>
-            <p class="description">TL;DR: Everyone is now able to test HousingBase.</p>
-            <p class="poster">by <a class="username" href="/profile.html?user=spigotbase">@spigotbase</a> | Novemver 2nd 2025 - 11:19 PM</p>
-            <div class="section-divider"></div>
-            <a class="update-contents">
-                <div>
-                <a href="/register.html"><button style="padding: 12px; margin-top: 10px; margin-right: 5px;" class="secondary-btn">Create a account</button></a>
-                <a href="/login.html"><button style="padding: 11px; margin-top: 10px;" class="secondary-btn">Login to your account</button></a>
-            </div>
-            </a>
-        </div>
-         <div class="update-card">
-            <h2 class="title">Dashboard for more control regarding HTSL</h2>
-            <p class="description">Dashboard for project management</p>
-            <p class="poster">by <a class="username" href="/profile.html?user=spigotbase">@spigotbase</a> | October 27th 2025 - 9:12 PM</p>
-            <div class="section-divider"></div>
-            <a class="update-contents">
-                <p>We have added a new system and page where you can now manage, edit and upload your HTSL content. Instead of the regular create page, you now do everything in your Dashboard.</p>
-                <div>
-                <a href="/dashboard.html"><button style="padding: 12px; margin-top: 10px; margin-right: 5px;" class="primary-btn">Open Dashboard</button></a>
-                <a href="/login.html"><button style="padding: 11px; margin-top: 10px;" class="secondary-btn">Login to your account</button></a>
-            </div>
-            </a>
-        </div>
-        <div class="update-card">
-            <h2 class="title">Online Housing Browser for HousingBase</h2>
-            <p class="description">Release of the Housing Browser</p>
-            <p class="poster">by <a class="username" href="/profile.html?user=spigotbase">@spigotbase</a> | October 24th 2025 - 9:16 AM</p>
-            <div class="section-divider"></div>
-            <a class="update-contents">
-                <p>The Housing Browser is now live on HousingBase! You can now explore all active housings on
-                Hypixel Housing through the web. Simply head to the "Browse Housing" section to get started.
-                Search, filter, and view housings with ease. We hope you enjoy this new feature as we continue
-                to enhance your HousingBase experience!</p>
-                <div>
-                <a href="/browser.html"><button style="padding: 12px; margin-top: 10px; margin-right: 5px;" class="primary-btn">Open Housing Browser</button></a>
-                <a href="#link=invalid"><button style="padding: 11px; margin-top: 10px;" class="secondary-btn"> < Link Invalid ></button></a>
-            </div>
-            </a>
-        </div>
-    </section>
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <img src="/image/fullwhite.png" alt="HousingBase Logo" class="footer-logo" />
-                <div class="social-icons">
-<a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube" class="icon-link">
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
-    <path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/>
-    <path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/>
-  </svg>
-</a>
+  <div id="announcement"></div>
 
+  <div class="news-wrap">
+    <div class="news-header">
+      <h1>HousingBase <span class="highlight">News</span></h1>
+      <p>Updates, releases, and announcements from the HousingBase team.</p>
+    </div>
 
-<a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub" class="icon-link">
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/>
-  </svg>
-</a>
+    <div id="adminPanel" class="news-post" style="display:none;">
+  <div class="news-post-header">
+    <h2 class="news-post-title">Create News Post</h2>
+    <span class="news-tag">Admin</span>
+  </div>
 
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="/index.html">About</a>
-                <a href="/contact.html">Contact</a>
-                <a href="/terms.html">Terms</a>
-            </div>
-            <p class="footer-credit">&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
+  <div class="news-divider"></div>
+
+  <input id="newsTitle" placeholder="Title" style="width:100%;margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid #333;background:#0c0c0c;color:#fff;">
+
+  <textarea id="newsBody" placeholder="Write your update..." style="width:100%;min-height:100px;margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid #333;background:#0c0c0c;color:#fff;"></textarea>
+
+  <select id="newsTag" style="width:100%;margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid #333;background:#0c0c0c;color:#fff;">
+    <option value="feature">Feature</option>
+    <option value="release">Release</option>
+    <option value="launch">Launch</option>
+  </select>
+
+  <button onclick="postNews()" class="primary-btn">Publish</button>
+</div>
+
+<div class="news-feed" id="newsFeed"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <img src="/image/fullwhite.png" alt="HousingBase Logo" class="footer-logo" />
+        <div class="social-icons">
+          <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/><path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/></svg>
+          </a>
+          <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/></svg>
+          </a>
         </div>
-    </footer>
-    <script src="script.js"></script>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+      <p class="footer-credit">&copy; 2025 <b>HousingBase</b>. All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+<script>
+
+const token = localStorage.getItem("token");
+
+/* ---------- ADMIN CHECK ---------- */
+async function checkAdmin() {
+  const panel = document.getElementById("adminPanel");
+  if (!panel) return;
+
+  const user = await getMe();
+
+  if (user && user.is_admin) {
+    panel.style.display = "block";
+  }
+}
+
+/* ---------- LOAD NEWS ---------- */
+async function loadNews() {
+  const feed = document.getElementById("newsFeed");
+  if (!feed) return;
+
+  const me = await getMe(); // uses your existing auth
+  const res = await fetch(`${API_BASE}/api/news`);
+  const posts = await res.json();
+
+  feed.innerHTML = "";
+
+  posts.forEach(p => {
+    const tagClass =
+      p.tag === "release" ? "green" :
+      p.tag === "launch" ? "orange" : "";
+
+    const date = new Date(p.created_at).toLocaleDateString();
+
+    const el = document.createElement("article");
+    el.className = "news-post";
+
+    el.innerHTML = `
+      <div class="news-post-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 class="news-post-title">${escapeHTML(p.title)}</h2>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="news-tag ${tagClass}">${p.tag}</span>
+
+          ${me && me.is_admin ? `
+            <button class="icon-btn del" onclick="deleteNews('${p.id || p._id}')">
+              ${SVG.trash}
+            </button>
+          ` : ""}
+        </div>
+      </div>
+
+      <div class="news-meta">
+        by <a href="/profile.html?user=${p.username}">@${p.username}</a>
+        &middot; ${date}
+      </div>
+
+      <div class="news-divider"></div>
+
+      <p class="news-body">${escapeHTML(p.body)}</p>
+    `;
+
+    feed.appendChild(el);
+  });
+}
+async function deleteNews(id) {
+  if (!confirm("Delete this post?")) return;
+
+  const res = await fetch(`${API_BASE}/api/news/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("authToken")
+    }
+  });
+
+  if (res.ok) {
+    showToast("Deleted");
+    loadNews();
+  } else {
+    showToast("Failed", "error");
+  }
+}
+/* ---------- POST NEWS ---------- */
+async function postNews() {
+  const title = document.getElementById("newsTitle").value.trim();
+  const body = document.getElementById("newsBody").value.trim();
+  const tag = document.getElementById("newsTag").value;
+
+  if (!title || !body) return alert("Fill all fields");
+
+  const res = await fetch(API_BASE + "/api/news", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + localStorage.getItem("authToken")
+    },
+    body: JSON.stringify({ title, body, tag })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    return alert(err.error || "Failed");
+  }
+
+  document.getElementById("newsTitle").value = "";
+  document.getElementById("newsBody").value = "";
+
+  loadNews();
+}
+
+/* ---------- ESCAPE ---------- */
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+/* ---------- INIT ---------- */
+checkAdmin();
+loadNews();
+
+</script>
 </body>
-
 </html>

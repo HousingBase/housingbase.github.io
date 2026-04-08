@@ -1,433 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="/image/favicon.png" type="image/png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
-    <title>HousingBase Dashboard</title>
-    <style>
-        /* Sidebar and header unchanged */
-        .sidebar {
-            position: fixed;
-            top: 45px;
-            left: 0;
-            width: 220px;
-            height: calc(100vh - 45px);
-            background: #141414;
-            border-right: 1px solid #3d3d3d;
-            display: flex;
-            flex-direction: column;
-            padding: 16px 0;
-            transition: transform 0.3s ease;
-            z-index: 999;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | HousingBase</title>
+  <link rel="icon" href="/image/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    body { padding-top: 0; }
+    header { position: fixed; z-index: 100; }
+    .dash-layout { display: flex; min-height: 100vh; padding-top: 56px; }
+    .dash-sidebar { position: fixed; top: 56px; left: 0; width: 208px; height: calc(100vh - 56px); background: rgba(6,6,6,0.95); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 0.9rem 0 1.5rem; z-index: 50; backdrop-filter: blur(10px); transition: transform 0.3s; }
+    .dash-sidebar.closed { transform: translateX(-100%); }
+    .sidebar-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: #2a2a2a; padding: 0.8rem 1.1rem 0.2rem; }
+    .dash-sidebar a { display: flex; align-items: center; gap: 8px; padding: 0.44rem 0.9rem; margin: 1px 0.5rem; border-radius: 7px; color: #555; text-decoration: none; font-size: 0.84rem; font-weight: 500; transition: all 0.14s; border: 1px solid transparent; }
+    .dash-sidebar a i { width: 14px; text-align: center; font-size: 0.82rem; flex-shrink: 0; }
+    .dash-sidebar a:hover { background: rgba(255,255,255,0.04); color: #bbb; }
+    .dash-sidebar a.active { background: var(--blue-dim); border-color: var(--blue-border); color: #90b8ff; }
+    .dash-sidebar a.active i { color: var(--blue); }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 0.5rem 0.8rem; }
+    .dash-main { margin-left: 208px; flex: 1; padding: 2rem 2rem; position: relative; z-index: 2; transition: margin-left 0.3s; min-height: calc(100vh - 56px); }
+    .page-hdr { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.6rem; gap: 1rem; flex-wrap: wrap; }
+    .page-hdr h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 0.15rem; }
+    .page-hdr p { color: var(--text-dim); font-size: 0.84rem; margin: 0; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 10px; margin-bottom: 1.6rem; }
+    .stat-card { background: rgba(10,10,10,0.75); border: 1px solid var(--border); border-radius: 11px; padding: 1rem 1.2rem; transition: all 0.18s; }
+    .stat-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+    .stat-lbl { font-size: 0.68rem; color: #333; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 0.35rem; }
+    .stat-val { font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-sub { font-size: 0.72rem; color: #333; margin-top: 0.25rem; }
+    .sec-title { font-size: 0.68rem; font-weight: 700; color: #2e2e2e; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 0.8rem; }
+    #projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(252px, 1fr)); gap: 11px; }
 
-        .sidebar a {
-            color: #E5E7EB;
-            text-decoration: none;
-            padding: 8px 20px;
-            display: flex;
-            align-items: center;
-            margin-left: 15px;
-            margin-right: 15px;
-            border-radius: 3px;
-            height: 30px;
-            width: auto;
-            padding-inline: 10px;
-            gap: 15px;
-            font-weight: 500;
-            transition: background 0.2s ease;
-        }
+    /* Fixed addon card for dashboard — buttons in flow, not absolutely overlapping */
+    .dash-addon-card {
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.1rem 0.8rem;
+      transition: all 0.2s;
+      position: relative;
+      min-height: 100px;
+      gap: 0;
+    }
+    .dash-addon-card:hover { border-color: rgba(37,100,235,0.35); background: rgba(20,28,48,0.7); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
+    .dash-addon-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 0 0 4px; padding-right: 0; }
+    .dash-addon-card .short-desc { color: var(--text-dim); font-size: 0.82rem; margin: 0 0 8px; line-height: 1.4; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .dash-addon-card .meta-row { display: flex; align-items: center; gap: 10px; font-size: 0.76rem; color: #3a3a3a; margin-top: auto; padding-top: 6px; }
+    .dash-card-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .dash-card-actions .icon-btn { width: 28px; height: 28px; flex-shrink: 0; }
 
-        .sidebar a:hover {
-            background: #20569448;
-        }
+    .new-card { border: 1px dashed rgba(255,255,255,0.06); border-radius: var(--radius-lg); min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 0.84rem; color: #2a2a2a; cursor: pointer; text-decoration: none; transition: all 0.18s; background: transparent; }
+    .new-card:hover { border-color: var(--blue-border); color: var(--blue); background: var(--blue-dim); }
+    .acct-section { background: rgba(10,10,10,0.75); border: 1px solid var(--border); border-radius: 11px; padding: 1.2rem 1.4rem; margin-bottom: 10px; max-width: 500px; }
+    .acct-section h3 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #333; margin: 0 0 0.9rem; }
+    .acct-row { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .acct-row:last-child { border-bottom: none; }
+    .acct-lbl { font-size: 0.82rem; color: #555; }
+    .acct-val { font-size: 0.84rem; color: #ccc; }
+    .danger-section { border-color: rgba(235,68,68,0.12); }
+    .danger-section h3 { color: #5a1a1a; }
 
-        .sidebar .sidebar-header {
-            font-size: 1.25rem;
-            text-transform: uppercase;
-            font-family: monospace;
-            letter-spacing: 1px;
-            padding: 0 15px;
-            color: #949494;
-            margin-bottom: 8px;
-        }
+    /* Dashboard card inner layout */
+    .dash-ac-inner { display:flex; flex-direction:column; height:100%; gap:4px; }
+    .dash-ac-badges { display:flex; flex-wrap:wrap; gap:4px; min-height:18px; }
+    .dash-ac-name { font-size:0.93rem; font-weight:600; color:var(--text); margin:0; line-height:1.3; }
+    .dash-ac-desc { font-size:0.8rem; color:var(--text-dim); margin:0; line-height:1.4; flex:1;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .dash-ac-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:6px; border-top:1px solid rgba(255,255,255,0.04); }
+    .dash-ac-stats { display:flex; align-items:center; gap:8px; }
+    .dash-stat-pill { display:inline-flex; align-items:center; gap:3px; font-size:0.74rem; color:#3a3a3a; }
+    .dash-ac-date { font-size:0.72rem; color:#2e2e2e; }
+    .dash-ac-actions { display:flex; align-items:center; gap:5px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.04); margin-top:4px; }
+    .dash-act-btn { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:rgba(10,10,10,0.5); color:var(--text-dim); cursor:pointer; text-decoration:none; transition:all 0.15s; flex-shrink:0; }
+    .dash-act-btn:hover { background:var(--blue-dim); border-color:var(--blue-border); color:#90b8ff; }
+    .dash-act-btn.del { background:rgba(235,68,68,0.1); border-color:rgba(235,68,68,0.25); color:#fca5a5; width:auto; padding:0 10px; gap:5px; }
+.dash-act-btn.del:hover { background:rgba(235,68,68,0.25); border-color:rgba(235,68,68,0.5); color:#ff6b6b; }
+    .gv-badge { background:rgba(139,92,246,0.12); border-color:rgba(139,92,246,0.3); color:#a78bfa; }
 
-        .sidebar .sidebar-h4 {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-family: monospace;
-            letter-spacing: 1px;
-            padding: 0 20px;
-            color: #6b6b6b;
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
+    @media (max-width: 768px) {
+      .dash-sidebar { transform: translateX(-100%); }
+      .dash-sidebar.open { transform: translateX(0); }
+      .dash-main { margin-left: 0; padding: 1.2rem 1rem; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+      #projects-grid { grid-template-columns: 1fr; }
+    }
+    .blurred {
+      filter: blur(6px);
+      user-select: none;
+      transition: filter 0.2s;
+    }
 
-        body {
-            background-color: #0c0c0c;
-        }
-
-        .page-container {
-            display: flex;
-        }
-
-        main {
-            margin-left: 230px;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            main {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        header {
-            display: flex;
-            width: 100%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            height: 45px;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            width: 220px;
-            background-color: #111111;
-            border-right: 1px solid #3d3d3d;
-            border-bottom: 1px solid #3d3d3d;
-            padding-left: 16px;
-            box-sizing: border-box;
-        }
-
-        .header-right {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            background-color: #0c0c0c;
-            padding-right: 1rem;
-            box-sizing: border-box;
-            border-bottom: 1px solid #3d3d3d;
-        }
-
-        .logo-container {
-            position: relative;
-            height: 23px;
-            width: auto;
-        }
-
-        .logo-container img {
-            height: 100%;
-            width: auto;
-            transition: filter 0.3s ease;
-            cursor: pointer;
-        }
-
-        .logo-container img:hover {
-            filter: brightness(1.5);
-        }
-
-        .user-status {
-            display: flex;
-            align-items: center;
-        }
-
-        .avatar-small {
-            border-radius: 2px;
-            cursor: pointer;
-            margin-left: 8px;
-            transition: background 0.3s ease;
-            padding: 3px;
-        }
-
-        .avatar-small:hover {
-            background: #6e6e6e48;
-        }
-
-        .display-name {
-            margin-right: 10px;
-            font-weight: lighter;
-            color: #aaaaaa;
-            cursor: pointer;
-            font-family: monospace, sans-serif;
-        }
-
-        .divider {
-            width: 1px;
-            height: 25px;
-            background-color: #3d3d3d;
-            margin-right: 8px;
-        }
-
-        .btn {
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.15s ease;
-        }
-
-        /* Projects dashboard container */
-#projects-dashboard {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    width: 100%; /* fit inside main content */
-    box-sizing: border-box;
-    padding: 16px;
-}
-        /* Addon cards */
-.addon-card {
-    flex: 1 1 calc(33.33% - 16px); /* three cards per row minus gap */
-    max-width: calc(33.33% - 16px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 12px 16px;
-    height: 140px;
-    border-radius: 6px;
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    transition: background-color 0.2s ease, transform 0.15s ease;
-    cursor: pointer;
-}
-
-
-        .addon-card:hover {
-            background-color: #252525;
-            transform: translateY(-1px);
-        }
-
-        .addon-card .addon-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .addon-card h4 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: #E5E7EB;
-        }
-
-        .addon-card p {
-            margin: 2px 0 0 0;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        .addon-card .meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        .addon-card .btn-container {
-            display: flex;
-            gap: 8px;
-        }
-
-        .user-link {
-            text-decoration: none;
-            color: #0073e6;
-        }
-
-        .avatar-img {
-            vertical-align: middle;
-        }
-
-        .user-link:hover {
-            text-decoration: none;
-            cursor: pointer;
-            color: #005bb5;
-        }
-
-        /* Responsive grid for smaller screens */
-        @media (max-width: 1200px) {
-            .addon-card {
-                flex: 1 1 28%;
-                max-width: 28%;
-            }
-            #projects-dashboard {
-                width: 120%;
-                margin-left: -10%;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .addon-card {
-                flex: 1 1 32%;
-                max-width: 32%;
-            }
-            #projects-dashboard {
-                width: 110%;
-                margin-left: -5%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .addon-card {
-                flex: 1 1 45%;
-                max-width: 45%;
-            }
-            #projects-dashboard {
-                width: 100%;
-                margin-left: 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .addon-card {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
-        }
-
-    </style>
+    .blurred:hover {
+      filter: blur(4px);
+    }
+  </style>
 </head>
-
 <body>
-<header>
-    <div class="header-left">
-        <a href="/index.html">
-            <div class="logo-container">
-                <img src="/image/blueblue.png" alt="HousingBase Logo" class="logo-default">
-                <img src="/image/blueblue.png" alt="HousingBase Logo Hover" class="logo-hover">
-            </div>
-        </a>
-    </div>
-    <div class="header-right">
-        <div class="controls">
-            <a href="/browser.html"><button class="btn">test</button></a>
-        </div>
-        <div class="user-status">
-            <div id="logged-in" style="display:flex; align-items:center;">
-                <div class="divider"></div>
-                <img id="avatarSmall" width="25" height="25" alt="Avatar" class="avatar-small">
-                <span id="displayName" class="display-name">spigotbase</span>
-            </div>
-        </div>
+  <div id="bg-dots" style="position:fixed;inset:0;background:radial-gradient(circle,rgba(50,50,50,0.12) 1.5px,transparent 0);background-size:24px 24px;z-index:0;pointer-events:none;mix-blend-mode:screen;"></div>
 
-        <div class="hamburger" id="toggleSidebar">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </div>
-</header>
+  <header>
+    <div class="logo"><a href="/index.html"><img src="image/blueblue.png" alt="HousingBase" /></a></div>
+    <div class="hamburger" id="sidebarBtn"><span></span><span></span><span></span></div>
+    <nav class="nav-links">
+      <a href="/housing.html">Housing Browser</a>
+      <a href="/fcm.html">FCM</a>
+      <a href="/news.html">News</a>
+      <a href="/browser.html">HTSL Library</a>
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/projects.html">Projects</a>
+      <div id="logged-out" style="display:flex;align-items:center;"><a href="/login.html"><button class="primary-btn">Sign In</button></a></div>
+      <div id="logged-in" style="display:none;align-items:center;">
+        <img id="avatarSmall" width="32" height="32" alt="Avatar" />
+        <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
+      </div>
+    </nav>
+  </header>
 
-<div class="page-container">
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">Dashboard</div>
-        <div class="sidebar-h4">DEVELOPMENT</div>
-        <a href="?page=projects"><i class="fa-solid fa-house"></i> Projects</a>
-        <a href="?page=analytics"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-        <div class="sidebar-h4">PERSONAL</div>
-        <a href="#"><i class="fa-solid fa-users"></i> Account</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+  <div id="announcement"></div>
+
+  <div class="dash-layout">
+    <nav class="dash-sidebar" id="dashSidebar">
+      <div class="sidebar-label">Development</div>
+      <a href="?page=projects" data-page="projects"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span> Projects</a>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Personal</div>
+      <a href="?page=account" data-page="account"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 21v-1a4 4 0 0 0-8 0v1"/><circle cx="12" cy="11" r="3"/></svg></span> Account</a>
+      <div class="sidebar-divider"></div>
+      <a href="/browser.html"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span> Back to site</a>
     </nav>
 
-    <main class="dashboard-content" id="dashboard-content">
-        <h1>Loading...</h1>
-    </main>
-</div>
+    <main class="dash-main" id="dashMain"></main>
+  </div>
 
-<script>
-    document.getElementById('toggleSidebar').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.querySelector('.hamburger').classList.toggle('active');
-    });
-    document.addEventListener("DOMContentLoaded", async () => {
-        const main = document.getElementById('dashboard-content');
-
-        const params = new URLSearchParams(window.location.search);
-        const page = params.get('page') || 'projects';
-
-        switch (page) {
-            case 'analytics':
-                main.innerHTML = '<h1>Analytics Dashboard</h1>';
-                break;
-            case 'account':
-                main.innerHTML = '<h1>Account Settings</h1>';
-                break;
-            default:
-                main.innerHTML = '<h1>Projects Overview</h1><div id="projects-dashboard"></div>';
-        }
-
-        if (page === 'projects') {
-            await loadDashboard(); // from dashboard.js
-        }
-    });
-</script>
-  <div id="modal-overlay">
-    <div id="modal-box">
-      <!-- Modal Header -->
+  <!-- View modal -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div id="modal-box" class="modal-box">
       <div class="modal-header">
         <h3 id="modal-title"></h3>
-        <span id="modal-close">&times;</span>
+        <span id="modal-close" class="modal-close"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></span>
       </div>
-
-      <!-- Modal Body -->
       <div class="modal-body">
-        <p id="modal-desc"></p>
-        <a id="modal-download" href="#" target="_blank">
-          <button class="blue-btn" style="margin-top:12px; font-size:1rem;">Download</button>
-        </a>
-        <h4>Code Contents:</h4>
+        <p class="modal-desc" id="modal-desc"></p>
+        <a id="modal-download" class="modal-dl-btn"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Download .htsl</a>
+        <div class="modal-code-label">File Contents</div>
+        <pre class="modal-pre" id="modal-pre">Loading…</pre>
       </div>
     </div>
   </div>
-  <div id="del-confirm-overlay" class="del-modal-overlay">
-    <div id="del-confirm-box" class="del-modal-box">
+
+  <!-- Delete confirm modal -->
+  <div id="del-confirm-overlay">
+    <div id="del-confirm-box">
       <div class="del-modal-header">
-        <h3>Confirm Action?</h3>
-        <span id="del-confirm-close" class="del-modal-close">&times;</span>
+        <h3><span style="display:inline-flex;align-items:center;justify-content:center;margin-right:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>Delete Project?</h3>
+        <span class="del-modal-close" id="del-confirm-close"><span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></span>
       </div>
       <div class="del-modal-body">
-        <p id="del-confirm-desc">Are you sure you want to delete '<Addon Name>'?</p>
-        <div style="margin-top:12px; display:flex; gap:10px;">
-          <button id="del-confirm-yes" class="blue-btn">Confirm</button>
-          <button id="del-confirm-no" class="del-btn">Cancel</button>
+        <p id="del-confirm-desc"></p>
+        <div class="del-actions" style="margin-top:1rem;">
+          <button class="danger-btn" id="del-confirm-yes">Delete</button>
+          <button class="secondary-btn" id="del-confirm-no">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-    <div id="warn-overlay", style="display:none;"> <!-- temp solution for dev -->
-    <div id="warn-box">
-      <div class="warn-header">
-        <h3>Access Denied</h3>
-      </div>
-      <div class="warn-body">
-        <p>You must be verified and signed in to upload and distribute in the HTSL Library. Sign in <a class="user-link"  href="/login.html">here</a>, or <a class="user-link"  href="/register.html">create a new account</a>.</p>
-        <button id="warn-continue" class="blue-btn" style="margin-top:12px; font-size:1rem;">Continue</button>
-      </div>
-    </div>
-  </div>
-<script src="access.js"></script>
-<script src="script.js"></script>
-<script src="dashboard.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const API_BASE_D = "https://housingbase-71z.onrender.com";
+    const curPage = new URLSearchParams(location.search).get("page") || "projects";
 
+    document.getElementById("sidebarBtn").addEventListener("click", () => {
+      document.getElementById("dashSidebar").classList.toggle("open");
+    });
+
+    document.querySelectorAll(".dash-sidebar a[data-page]").forEach(a => {
+      a.classList.toggle("active", a.dataset.page === curPage);
+    });
+
+    function fmtDate(ts) { if (!ts) return "—"; return new Date(ts).toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" }); }
+    function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+    // ---- Delete modal (self-contained, no dependency on script.js confirmDelete) ----
+    let _delCb = null;
+    function askDelete(name, cb) {
+      _delCb = cb;
+      const overlay = document.getElementById("del-confirm-overlay");
+      const desc = document.getElementById("del-confirm-desc");
+      if (!overlay) return;
+      if (desc) desc.textContent = `"${name}" will be permanently removed. This cannot be undone.`;
+      overlay.classList.add("show");
+    }
+    function closeDelModal() {
+      document.getElementById("del-confirm-overlay")?.classList.remove("show");
+      _delCb = null;
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("del-confirm-yes")?.addEventListener("click", () => {
+      const cb = _delCb;
+      closeDelModal();
+      if (cb) cb();
+    });
+      document.getElementById("del-confirm-no")?.addEventListener("click", closeDelModal);
+      document.getElementById("del-confirm-close")?.addEventListener("click", closeDelModal);
+      document.getElementById("del-confirm-overlay")?.addEventListener("click", e => { if (e.target.id === "del-confirm-overlay") closeDelModal(); });
+    });
+
+    async function renderProjects(me) {
+      const main = document.getElementById("dashMain");
+      main.innerHTML = `
+        <div class="page-hdr">
+          <div><h1>Projects</h1><p>Your uploaded HTSL files</p></div>
+          <a href="/create.html" style="text-decoration:none;"><button class="primary-btn"><span style="display:inline-flex;align-items:center;justify-content:center;margin-right:5px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>New</button></a>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-lbl">Projects</div><div class="stat-val" id="sv-p">—</div><div class="stat-sub">uploaded</div></div>
+          <div class="stat-card"><div class="stat-lbl">Downloads</div><div class="stat-val" id="sv-d">—</div><div class="stat-sub">all time</div></div>
+          <div class="stat-card"><div class="stat-lbl">Likes</div><div class="stat-val" id="sv-l">—</div><div class="stat-sub">received</div></div>
+        </div>
+        <div class="sec-title">Your files</div>
+        <div id="projects-grid"></div>`;
+
+      const grid = document.getElementById("projects-grid");
+      grid.innerHTML = Array(4).fill(0).map(() => `
+        <div class="dash-addon-card" style="pointer-events:none;">
+          <div class="skeleton" style="height:15px;width:50%;margin-bottom:5px;"></div>
+          <div class="skeleton" style="height:11px;width:80%;"></div>
+          <div class="skeleton" style="height:11px;width:35%;margin-top:10px;"></div>
+        </div>`).join("");
+
+      try {
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${API_BASE_D}/api/addons`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) throw new Error();
+        const all = await res.json();
+        const addons = all.filter(a => a.username === me.username);
+console.log("my addons:", addons);
+        document.getElementById("sv-p").textContent = addons.length;
+        document.getElementById("sv-d").textContent = addons.reduce((s,a) => s+(a.downloads||0), 0);
+        document.getElementById("sv-l").textContent = addons.reduce((s,a) => s+(a.likes||0), 0);
+
+        grid.innerHTML = "";
+        if (!addons.length) {
+          const nc = document.createElement("a");
+          nc.href = "/create.html"; nc.className = "new-card";
+          nc.innerHTML = `<span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Upload your first project`;
+          grid.appendChild(nc);
+          return;
+        }
+
+addons.forEach(a => {
+  const id = a._id;
+  const card = document.createElement("div");
+  card.className = "dash-addon-card";
+
+  const displayDesc = esc(a.short_description || a.description || "");
+
+  card.innerHTML = `
+    <div class="dash-ac-inner">
+
+      <div class="dash-ac-badges">
+        ${a.visibility === "unlisted" ? `<span class="category-badge vis-badge-unlisted">Unlisted</span>` : ""}
+        ${a.visibility === "private" ? `<span class="category-badge vis-badge-private">Private</span>` : ""}
+        ${a.game_version ? `<span class="category-badge gv-badge">${a.game_version === "reborn" ? "HTSL Reborn" : "1.8.9 Legacy"}</span>` : ""}
+      </div>
+
+      <h4 class="dash-ac-name">${esc(a.name)}</h4>
+      <p class="dash-ac-desc">${displayDesc}</p>
+
+      <div class="dash-ac-actions">
+        <!-- OPEN PAGE -->
+<a href="/addon.html?id=${id}" class="dash-act-btn" onclick="event.stopPropagation()" title="Open">
+  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+</a>
+
+<!-- DELETE -->
+<button class="dash-act-btn del js-del" style="margin-left:auto;" title="Delete">
+  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+  Delete
+</button>
+      </div>
+
+    </div>
+  `;
+
+  // 🔥 CLICK CARD = EDIT
+  card.addEventListener("click", () => {
+    location.href = `/update.html?id=${id}`;
+  });
+
+  // delete
+card.querySelector(".js-del").addEventListener("click", e => {
+    e.stopPropagation();
+    e.preventDefault();
+    askDelete(a.name, async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const r = await fetch(`${API_BASE_D}/api/addons/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (r.status === 204 || r.ok) {
+          showToast("Project deleted");
+          await renderProjects(me);
+        } else {
+          const body = await r.json().catch(() => ({}));
+          showToast(body.error || `Delete failed (${r.status})`, "error");
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        showToast("Network error — could not delete", "error");
+      }
+    });
+  });
+  grid.appendChild(card);
+});
+
+        const nc = document.createElement("a");
+        nc.href = "/create.html"; nc.className = "new-card";
+        nc.innerHTML = `<span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> New project`;
+        grid.appendChild(nc);
+      } catch(err) {
+        console.error(err);
+        grid.innerHTML = `<div style="color:#333;text-align:center;padding:2rem;grid-column:1/-1;"><span style="display:inline-flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:0.8rem;display:block;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><p>Couldn't load projects</p></div>`;
+        ["sv-p","sv-d","sv-l"].forEach(id => { const el=document.getElementById(id); if(el) el.textContent="0"; });
+      }
+    }
+
+    async function renderAccount(me) {
+      const main = document.getElementById("dashMain");
+      main.innerHTML = `
+        <div class="page-hdr"><div><h1>Account</h1><p>Your profile &amp; credentials</p></div></div>
+        <div class="acct-section">
+          <h3>Profile</h3>
+          <div class="acct-row"><span class="acct-lbl">Username</span><span class="acct-val">${esc(me.username)}</span></div>
+          <div class="acct-row"><span class="acct-lbl">Display Name</span><span class="acct-val">${esc(me.displayName||me.username)}</span></div>
+          <div class="acct-row">
+  <span class="acct-lbl">Email</span>
+  <span style="display:flex;align-items:center;gap:6px;">
+    
+    <span id="emailValue" class="acct-val blurred">
+      ${esc(me.email || "—")}
+    </span>
+
+    <button id="toggleEmail" class="icon-btn" style="width:26px;height:26px;">
+      <!-- eye icon -->
+      <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </button>
+
+  </span>
+</div>
+          <div class="acct-row"><span class="acct-lbl">Status</span><span class="acct-val" style="color:${me.verified?"#4ade80":"#f87171"}">${me.verified?"✓ Verified":"✗ Unverified"}</span></div>
+        </div>
+        <div class="acct-section">
+          <h3>Quick Links</h3>
+          <div class="acct-row">
+            <span class="acct-lbl">Public profile</span>
+            <a href="/profile.html?user=${me.username}" class="icon-btn" style="width:auto;padding:0 10px;color:#90b8ff;border-color:var(--blue-border);text-decoration:none;height:26px;font-size:0.78rem;gap:4px;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span> View
+            </a>
+          </div>
+        </div>
+        <div class="acct-section danger-section">
+          <h3>Session</h3>
+          <div class="acct-row">
+            <span class="acct-lbl">Sign out of HousingBase</span>
+            <button class="danger-btn" id="signOutBtn" style="padding:0.4rem 0.8rem;font-size:0.8rem;"><span style="display:inline-flex;align-items:center;justify-content:center;margin-right:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>Sign Out</button>
+          </div>
+        </div>`;
+
+        const emailEl = document.getElementById("emailValue");
+const toggleBtn = document.getElementById("toggleEmail");
+
+let visible = false;
+
+toggleBtn.addEventListener("click", () => {
+  visible = !visible;
+
+  if (visible) {
+    emailEl.classList.remove("blurred");
+  } else {
+    emailEl.classList.add("blurred");
+  }
+});
+
+      document.getElementById("signOutBtn").addEventListener("click", async () => {
+        const token = localStorage.getItem("authToken");
+        try { await fetch(`${API_BASE_D}/api/logout`, { method:"POST", headers:{ Authorization:`Bearer ${token}` } }); } catch {}
+        localStorage.removeItem("authToken");
+        location.href = "/index.html";
+      });
+    }
+
+    (async () => {
+      const me = await getMe();
+      renderAuth(me);
+      await loadAnnouncement();
+      if (!me) { location.href = "/login.html"; return; }
+      if (curPage === "account") await renderAccount(me);
+      else await renderProjects(me);
+    })();
+  </script>
 </body>
 </html>

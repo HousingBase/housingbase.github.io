@@ -1,164 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="/image/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
   <title>Home | HousingBase</title>
-
   <style>
-    body {
-      overflow-x: hidden;
+    body { overflow-x: hidden; }
+    #typedText { font-family: monospace; background: rgb(12,12,12); color: #e8e8e8; white-space: nowrap; }
+    #typewriter { white-space: nowrap; display: inline-block; background: rgb(12,12,12); padding: 3px 8px; border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; }
+    #cursor { display: inline-block; opacity: 1; animation: blink 1s step-start infinite; }
+    #cursor.hidden { opacity: 0; }
+    @keyframes blink { 0%,50%,100% { opacity:1; } 25%,75% { opacity:0; } }
+
+    .hero { display:flex; align-items:flex-start; justify-content:space-between; padding:5rem 4rem 2rem; max-width:1280px; margin:0 auto; position:relative; z-index:2; gap:2rem; }
+    .hero-text { flex:1; max-width:620px; }
+    .hero-text h1 { font-size:clamp(2.6rem,5vw,3.8rem); font-weight:900; margin:0 0 0.6rem; line-height:1.1; }
+    .hero-tagline { color:#888; font-size:1rem; margin:0 0 1.2rem; }
+    .hero-text .description { color:#ccc; font-size:1rem; margin:0 0 1.4rem; }
+    .feature-tags { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.6rem; }
+    .feature-tags span { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0.3rem 0.9rem; font-size:0.79rem; color:#555; cursor:default; user-select:none; transition:all 0.2s; }
+    .feature-tags span:hover { border-color:rgba(37,100,235,0.4); color:#90b8ff; background:rgba(37,100,235,0.08); }
+    .index-buttons { display:flex; gap:0.7rem; flex-wrap:wrap; }
+    .hero-visual { flex:1; display:flex; justify-content:flex-end; align-items:flex-start; padding-top:1rem; }
+    .hero-card-stack { position:relative; width:340px; }
+    .hero-card { background:rgba(14,14,14,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.2rem 1.4rem; backdrop-filter:blur(12px); }
+    .hero-card + .hero-card { margin-top:10px; }
+    .hero-card .hc-label { font-size:0.7rem; color:#333; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem; }
+    .hero-card .hc-value { font-size:1.4rem; font-weight:700; color:#fff; }
+    .hero-card .hc-sub { font-size:0.8rem; color:#4ade80; margin-top:2px; }
+
+    .section-divider { height:1px; background:rgba(255,255,255,0.05); margin:0; }
+
+    .promo { text-align:center; padding:3rem 1.5rem; position:relative; z-index:2; }
+    .promo h2 { font-size:1.8rem; font-weight:400; margin:0 0 0.5rem; }
+    .promo h3 { color:#555; font-size:1rem; font-weight:400; margin:0; }
+    .promo a { color:#2564eb; text-decoration:none; }
+    .promo a:hover { color:#90b8ff; }
+
+    .ticker-label { text-align:center; font-size:0.8rem; color:#333; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.6rem; position:relative; z-index:3; }
+
+    @media (max-width:900px) {
+      .hero { flex-direction:column; padding:4rem 1.5rem 2rem; }
+      .hero-visual { display:none; }
     }
-
-    #typedText {
-      font-family: monospace;
-      background-color: rgb(19, 19, 19);
-      color: rgb(236, 236, 236);
-      white-space: nowrap;
-      z-index: 3;
-    }
-
-    #typewriter {
-      white-space: nowrap;
-      display: inline-block;
-      background-color: rgb(19, 19, 19);
-      padding-right: 7px;
-      padding-left: 2px;
-      z-index: 3;
-    }
-
-    #cursor {
-      display: inline-block;
-      opacity: 1;
-      animation: blink 1s step-start infinite;
-    }
-
-    #cursor.hidden {
-      opacity: 0;
-    }
-
-    @keyframes blink {
-
-      0%,
-      50%,
-      100% {
-        opacity: 1;
-      }
-
-      25%,
-      75% {
-        opacity: 0;
-      }
+    @media (max-width:600px) {
+      .hero { padding:3rem 1rem 1.5rem; }
     }
   </style>
 </head>
-
 <body>
-  <div class="dot-background"></div>
   <header>
     <div class="logo">
-      <a href="/index.html" style="display: inline-block;">
-        <img src="image/blueblue.png" alt="HousingBase Logo">
-      </a>
+      <a href="/index.html"><img src="image/blueblue.png" alt="HousingBase Logo"></a>
     </div>
-
-    <div class="hamburger">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
     <nav class="nav-links">
       <a href="/housing.html">Housing Browser</a>
+      <a href="/fcm.html">FCM</a>
       <a href="/news.html">News</a>
       <a href="/browser.html">HTSL Library</a>
       <a href="/dashboard.html">Dashboard</a>
       <a href="/projects.html">Projects</a>
-
-      <div id="logged-out" style="display:flex; align-items:center;">
-        <a href="/login.html"><button class="primary-btn" id="signInBtnHeader">Sign In</button></a>
+      <div id="logged-out" style="display:flex;align-items:center;">
+        <a href="/login.html"><button class="primary-btn">Sign In</button></a>
       </div>
-      <div id="logged-in" style="display:none; align-items:center;">
-        <img id="avatarSmall" width="32" height="32" alt="Avatar"
-          style="border-radius:6px; cursor:pointer; margin-left:8px;">
-        <span id="displayName"
-          style="margin-left:8px; font-weight:bold; color:#fff; cursor:pointer; display: none;"></span>
+      <div id="logged-in" style="display:none;align-items:center;">
+        <img id="avatarSmall" width="32" height="32" alt="Avatar" style="border-radius:6px;cursor:pointer;margin-left:8px;">
+        <span id="displayName" style="margin-left:8px;font-weight:600;color:#fff;cursor:pointer;display:none;"></span>
       </div>
     </nav>
   </header>
-  <div id="announcement" style="display:none;"></div>
+
+  <div id="announcement"></div>
 
   <main class="hero">
     <div class="hero-text">
       <h1>Housing<span class="editor-title">Base</span></h1>
-      <p class="subtitle" id="typewriter">
-        <span id="typedText"></span><span id="cursor">_</span>
-      </p>
-      <p class="description">
-        The <span class="highlighttxt">#1 website</span> for Housing creators!<br />
-      </p>
+      <p id="typewriter"><span id="typedText"></span><span id="cursor">_</span></p>
+      <p class="description">The <span class="highlighttxt">#1 platform</span> for Hypixel Housing creators.</p>
       <div class="feature-tags">
         <span>Upload HTSL</span>
         <span>Download HTSL</span>
-        <span>cool stuff</span>
-        <span>Keep your private code organized</span>
-        <span>Housing Tools</span>
-        <span>Online Color Code Tester</span>
-        <span>Browse Hypixel Housing online</span>
+        <span>Private cloud storage</span>
+        <span>Housing Browser</span>
+        <span>Project Dashboard</span>
+        <span>Color code preview</span>
+        <span>Community library</span>
       </div>
       <div class="index-buttons">
-        <button class="primary-btn">Primary</button>
-        <button class="secondary-btn">Secondary</button>
+        <a href="/browser.html"><button class="primary-btn">Browse Library</button></a>
+        <a href="/register.html"><button class="secondary-btn">Create Account</button></a>
       </div>
     </div>
-    <div class="hero-image"></div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="hero-card">
+          <div class="hc-label">Community Projects</div>
+          <div class="hc-value" id="hero-count">—</div>
+          <div class="hc-sub">HTSL files uploaded</div>
+        </div>
+        <div class="hero-card">
+          <div class="hc-label">Latest upload</div>
+          <div class="hc-value" id="hero-latest" style="font-size:1rem;color:#ccc;">—</div>
+          <div class="hc-sub" id="hero-latest-sub" style="color:#888;"></div>
+        </div>
+      </div>
+    </div>
   </main>
+
+  <div class="section-divider"></div>
 
   <section class="promo">
     <h2>Upload and share <span class="highlight">HTSL.</span></h2>
-    <h3>Distribute, upload and share your creations with our custom <a href="browser.html">HTSL Library</a>.</h3>
-
+    <h3>Distribute your creations with our <a href="browser.html">HTSL Library</a>.</h3>
   </section>
-  <div class="center">
-    <txt class="txte">Browse <span class="highlighttxt">HTSL creations</span> uploaded by our users.</txt>
-  </div>
+
+  <div class="ticker-label">Recent uploads</div>
   <section class="addon-ticker-section">
     <div class="addon-ticker" id="addonTicker"></div>
   </section>
+
   <section class="promo">
     <h2>Browse <span class="highlight">Hypixel Housing.</span></h2>
-    <h3>Discover active housings on hypixel with our <a href="browser.html">Housing Browser</a>.</h3>
-
+    <h3>Discover active housings with our <a href="housing.html">Housing Browser</a>.</h3>
   </section>
 
-  <div class="section2"></div>
+  <div class="section-divider"></div>
 
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-top">
         <img src="/image/fullwhite.png" alt="HousingBase Logo" class="footer-logo" />
         <div class="social-icons">
-          <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube" class="icon-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
-              <path
-                d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z" />
-              <path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black" />
-            </svg>
+          <a href="https://www.youtube.com/@spigotbase" target="_blank" aria-label="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M23.498 6.186a2.97 2.97 0 0 0-2.09-2.103C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.583a2.97 2.97 0 0 0-2.09 2.103A31.4 31.4 0 0 0 .5 12a31.4 31.4 0 0 0 .002 5.814 2.97 2.97 0 0 0 2.09 2.103C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.583a2.97 2.97 0 0 0 2.09-2.103A31.4 31.4 0 0 0 23.5 12a31.4 31.4 0 0 0-.002-5.814z"/><path d="M9.75 15.02v-6.04L15.5 12l-5.75 3.02z" fill="black"/></svg>
           </a>
-
-
-          <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub" class="icon-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z" />
-            </svg>
+          <a href="https://github.com/spigotbase" target="_blank" aria-label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.096 3.292 9.417 7.863 10.95.575.104.785-.25.785-.556v-1.94c-3.2.694-3.875-1.544-3.875-1.544-.524-1.329-1.28-1.682-1.28-1.682-1.046-.716.08-.7.08-.7 1.157.08 1.766 1.188 1.766 1.188 1.03 1.767 2.704 1.257 3.364.96.104-.747.403-1.257.732-1.546-2.553-.29-5.238-1.276-5.238-5.68 0-1.256.448-2.283 1.183-3.087-.12-.29-.512-1.468.112-3.06 0 0 .964-.31 3.162 1.18A10.98 10.98 0 0 1 12 6.845a10.9 10.9 0 0 1 2.88.39c2.197-1.49 3.162-1.18 3.162-1.18.624 1.592.232 2.77.112 3.06.735.804 1.183 1.83 1.183 3.087 0 4.418-2.69 5.385-5.26 5.67.416.36.784 1.077.784 2.174v3.22c0 .31.208.67.792.555C20.21 21.41 23.5 17.09 23.5 12 23.5 5.648 18.352.5 12 .5z"/></svg>
           </a>
         </div>
       </div>
@@ -171,217 +155,58 @@
     </div>
   </footer>
 
-  <div id="modal-overlay">
-    <div id="modal-box">
+  <div id="modal-overlay" class="modal-overlay">
+    <div id="modal-box" class="modal-box">
       <div class="modal-header">
         <h3 id="modal-title"></h3>
-        <span id="modal-close">&times;</span>
+        <span id="modal-close" class="modal-close">&times;</span>
       </div>
       <div class="modal-body">
-        <p id="modal-desc"></p>
-        <a id="modal-download" style="text-decoration: none; margin-top: 10px; margin-bottom: 10px;"
-          class="primary-btn">Download File
+        <p class="modal-desc" id="modal-desc"></p>
+        <a id="modal-download" class="modal-dl-btn" style="display:inline-flex;align-items:center;gap:7px;">
+          Download .htsl
         </a>
-        <h4>Code Contents:</h4>
+        <div class="modal-code-label">File Contents</div>
+        <pre class="modal-pre" id="modal-pre">Loading…</pre>
       </div>
     </div>
   </div>
 
-  <div id="del-confirm-overlay" class="del-modal-overlay">
-    <div id="del-confirm-box" class="del-modal-box">
+  <div id="del-confirm-overlay">
+    <div id="del-confirm-box">
       <div class="del-modal-header">
-        <h3>Confirm Action?</h3>
-        <span id="del-confirm-close" class="del-modal-close">&times;</span>
+        <h3>Delete Project?</h3>
+        <span class="del-modal-close" id="del-confirm-close">&times;</span>
       </div>
       <div class="del-modal-body">
-        <p id="del-confirm-desc">Are you sure you want to delete '<Addon Name>'?</p>
-        <div style="margin-top:12px; display:flex; gap:10px;">
-          <button id="del-confirm-yes" class="primary-btn">Confirm</button>
-          <button id="del-confirm-no" class="del-btn">Cancel</button>
+        <p id="del-confirm-desc"></p>
+        <div class="del-actions" style="margin-top:1rem;">
+          <button class="danger-btn" id="del-confirm-yes">Delete</button>
+          <button class="secondary-btn" id="del-confirm-no">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-  <script>
-
-    function avatarURL(path) {
-      if (!path || path.length === 0) return `${API_BASE}/uploads/avatars/default.png`;
-      if (path.startsWith("http")) return path;
-      return `${API_BASE}/${path.replace(/^\/?/, "")}`;
-    }
-    async function startRealAddonTicker(speed = 2) {
-      const ticker = document.getElementById("addonTicker");
-      if (!ticker) return;
-
-      try {
-        const token = localStorage.getItem("authToken");
-        const res = await fetch(`${API_BASE}/api/addons`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch addons");
-        const addons = await res.json();
-        if (!addons.length) return;
-
-        ticker.innerHTML = "";
-
-        const createItem = (a) => {
-          const item = document.createElement("div");
-          item.className = "addon-ticker-item";
-
-          const avatar = document.createElement("img");
-          avatar.src = avatarURL(a.avatar);
-          item.appendChild(avatar);
-
-const name = document.createElement("div");
-name.className = "addon-name";
-// Apply Minecraft color codes and truncate visually
-let rawName = a.name.length > 15 ? a.name.slice(0, 15) + "…" : a.name;
-name.appendChild(rawName.replaceColorCodes());
-item.appendChild(name);
-
-const desc = document.createElement("div");
-desc.className = "addon-desc";
-let rawDesc = a.description 
-    ? (a.description.length > 15 ? a.description.slice(0, 15) + "…" : a.description) 
-    : "";
-desc.appendChild(rawDesc.replaceColorCodes());
-item.appendChild(desc);
-
-
-          item.addEventListener("click", async () => {
-            document.getElementById("modal-title").textContent = a.name;
-            document.getElementById("modal-desc").textContent =
-              a.description || "No description provided.";
-            const modalDownload = document.getElementById("modal-download");
-            modalDownload.href = `${API_BASE}/api/addons/${a.id}/download`;
-            modalDownload.style.display = "inline-block";
-
-            const overlay = document.getElementById("modal-overlay");
-            const box = document.getElementById("modal-box");
-            const modalBody = document.querySelector(".modal-body");
-
-            overlay.classList.add("show");
-            overlay.style.opacity = "1";
-            box.style.transform = "scale(1)";
-
-            const oldPre = modalBody.querySelector("pre");
-            if (oldPre) oldPre.remove();
-
-            try {
-              const contentRes = await fetch(`${API_BASE}/api/addons/${a.id}/contents`);
-              const data = contentRes.ok ? await contentRes.json() : { content: "(failed to load)" };
-              const pre = document.createElement("pre");
-              pre.textContent = data.content || "(empty file)";
-              modalBody.appendChild(pre);
-            } catch {
-              const pre = document.createElement("pre");
-              pre.textContent = "(failed to load content)";
-              modalBody.appendChild(pre);
-            }
-          });
-
-          return item;
-        };
-
-        addons.forEach(a => ticker.appendChild(createItem(a)));
-        while (ticker.scrollWidth < ticker.clientWidth * 2) {
-          addons.forEach(a => ticker.appendChild(createItem(a)));
-        }
-
-        let offset = 0;
-        let paused = false;
-
-        ticker.addEventListener("mouseenter", () => (paused = true));
-        ticker.addEventListener("mouseleave", () => (paused = false));
-
-        function animate() {
-          if (!paused) {
-            offset -= speed;
-            if (Math.abs(offset) >= ticker.scrollWidth / 2) {
-              offset = 0;
-            }
-            ticker.style.transform = `translateX(${offset}px)`;
-          }
-          requestAnimationFrame(animate);
-        }
-
-        animate();
-      } catch (err) {
-        console.error("Addon ticker error:", err);
-      }
-    }
-
-
-    function closeModal() {
-      const overlay = document.getElementById("modal-overlay");
-      const box = document.getElementById("modal-box");
-      if (!overlay || !box) return;
-
-      overlay.style.opacity = "0";
-      box.style.transform = "scale(0.5)";
-      overlay.addEventListener("transitionend", function handler(e) {
-        if (e.propertyName === "opacity") {
-          overlay.classList.remove("show");
-          overlay.style.opacity = "";
-          box.style.transform = "";
-          overlay.removeEventListener("transitionend", handler);
-        }
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      startRealAddonTicker(2);
-      document.getElementById("modal-close").addEventListener("click", closeModal);
-      document.getElementById("modal-overlay").addEventListener("click", e => {
-        if (e.target.id === "modal-overlay") closeModal();
-      });
-      document.addEventListener("keydown", e => {
-        if (e.key === "Escape") closeModal();
-      });
-    });
-  </script>
-
+  <script src="script.js"></script>
+  <script src="MinecraftColorCodes.3.7.js"></script>
   <script>
     const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
     hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-      hamburger.classList.toggle('open');
-    });
-
-    window.addEventListener('load', () => {
-      const fadeElements = document.querySelectorAll('.hero-text > *, .promo > *, header, footer');
-      fadeElements.forEach((el, i) => {
-        el.classList.add('fade-up');
-        setTimeout(() => {
-          el.classList.add('visible');
-        }, 200 + i * 150);
-      });
+      document.querySelector('.nav-links').classList.toggle('active');
     });
 
     document.addEventListener('DOMContentLoaded', () => {
       const typedTextEl = document.getElementById('typedText');
       const cursorEl = document.getElementById('cursor');
       if (!typedTextEl || !cursorEl) return;
-
       const phrases = [
-        "The best place to explore Housing and HTSL.",
+        "The best place for Housing creators.",
         "Upload your HTSL creations easily.",
         "Keep your private HTSL code on the cloud.",
         "Download HTSL creations by other users.",
-        "Found bad content? Report it using the new report feature.",
       ];
-
-      let phraseIndex = 0;
-      let charIndex = 0;
-      let typing = true;
-
-      const typingSpeed = 70;
-      const deletingSpeed = 25;
-      const fullTextPause = 1000;
-      const totalLoopDelay = 3000;
-
+      let phraseIndex = 0, charIndex = 0, typing = true;
       function typeLoop() {
         const currentText = phrases[phraseIndex];
         if (typing) {
@@ -390,11 +215,11 @@ item.appendChild(desc);
           cursorEl.classList.remove('hidden');
           if (charIndex === currentText.length) {
             typing = false;
-            setTimeout(() => cursorEl.classList.add('hidden'), fullTextPause);
-            setTimeout(typeLoop, totalLoopDelay);
+            setTimeout(() => cursorEl.classList.add('hidden'), 1000);
+            setTimeout(typeLoop, 3000);
             return;
           }
-          setTimeout(typeLoop, typingSpeed);
+          setTimeout(typeLoop, 65);
         } else {
           charIndex--;
           typedTextEl.textContent = currentText.slice(0, charIndex);
@@ -405,14 +230,95 @@ item.appendChild(desc);
             setTimeout(typeLoop, 200);
             return;
           }
-          setTimeout(typeLoop, deletingSpeed);
+          setTimeout(typeLoop, 22);
         }
       }
       typeLoop();
     });
-  </script>
-  <script src="script.js"></script>
-  <script src="MinecraftColorCodes.3.7.js"></script>
-</body>
 
+    async function loadHeroStats() {
+      try {
+        const res = await fetch(`${API_BASE}/api/addons`);
+        if (!res.ok) return;
+        const addons = await res.json();
+        const countEl = document.getElementById("hero-count");
+        const latestEl = document.getElementById("hero-latest");
+        const latestSub = document.getElementById("hero-latest-sub");
+        if (countEl) countEl.textContent = addons.length;
+        if (addons.length && latestEl) {
+          const sorted = addons.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+          latestEl.textContent = sorted[0].name;
+          if (latestSub) latestSub.textContent = "by @" + (sorted[0].displayName || sorted[0].username);
+        }
+      } catch {}
+    }
+
+    async function startAddonTicker(speed = 1.5) {
+      const ticker = document.getElementById("addonTicker");
+      if (!ticker) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/addons`);
+        if (!res.ok) return;
+        const addons = await res.json();
+        if (!addons.length) return;
+        ticker.innerHTML = "";
+
+        function avatarURLLocal(path) {
+          if (!path) return `${API_BASE}/uploads/avatars/default.png`;
+          if (path.startsWith("http")) return path;
+          return `${API_BASE}/${path.replace(/^\/?/, "")}`;
+        }
+
+        function createItem(a) {
+          const item = document.createElement("div");
+          item.className = "addon-ticker-item";
+          const img = document.createElement("img");
+          img.src = avatarURLLocal(a.avatar);
+          img.alt = "";
+          item.appendChild(img);
+          const nameEl = document.createElement("div");
+          nameEl.className = "addon-name";
+          const rawName = a.name.length > 16 ? a.name.slice(0, 16) + "…" : a.name;
+          if (typeof rawName.replaceColorCodes === "function") {
+            nameEl.appendChild(rawName.replaceColorCodes());
+          } else {
+            nameEl.textContent = rawName;
+          }
+          item.appendChild(nameEl);
+          const descEl = document.createElement("div");
+          descEl.className = "addon-desc";
+          const rawDesc = a.description ? (a.description.length > 18 ? a.description.slice(0, 18) + "…" : a.description) : "";
+          descEl.textContent = rawDesc;
+          item.appendChild(descEl);
+          item.addEventListener("click", () => openModal(a, null));
+          return item;
+        }
+
+        let items = addons.map(createItem);
+        items.forEach(i => ticker.appendChild(i));
+        while (ticker.scrollWidth < window.innerWidth * 2.5) {
+          addons.forEach(a => ticker.appendChild(createItem(a)));
+        }
+
+        let offset = 0, paused = false;
+        ticker.addEventListener("mouseenter", () => paused = true);
+        ticker.addEventListener("mouseleave", () => paused = false);
+        function animate() {
+          if (!paused) {
+            offset -= speed;
+            if (Math.abs(offset) >= ticker.scrollWidth / 2) offset = 0;
+            ticker.style.transform = `translateX(${offset}px)`;
+          }
+          requestAnimationFrame(animate);
+        }
+        animate();
+      } catch {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadHeroStats();
+      startAddonTicker();
+    });
+  </script>
+</body>
 </html>
