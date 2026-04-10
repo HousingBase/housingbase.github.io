@@ -1,4 +1,4 @@
-const API_BASE = "https://housingbase-71z.onrender.com";
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const status = document.getElementById("status");
